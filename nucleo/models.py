@@ -13,7 +13,7 @@ class User(models.Model):
         return self.userName
     
 class Client(models.Model):
-    dni=models.IntegerField(max_length=8,verbose_name="DNI")
+    dni=models.CharField(max_length=9,verbose_name="DNI")
     name=models.CharField(max_length=50,verbose_name="Name")
     surname=models.CharField(max_length=50,verbose_name="Surname")
     address=models.CharField(max_length=50,verbose_name="Address")
@@ -23,7 +23,7 @@ class Client(models.Model):
     idUser=models.ForeignKey(User,verbose_name="IdUser",on_delete=models.CASCADE)
     
 class Employees(models.Model):
-    dni=models.IntegerField(max_length=8,verbose_name="DNI")
+    dni=models.CharField(max_length=9,verbose_name="DNI")
     name=models.CharField(max_length=50,verbose_name="Name")
     surname=models.CharField(max_length=50,verbose_name="Surname")
     address=models.CharField(max_length=50,verbose_name="Address")
@@ -33,6 +33,7 @@ class Employees(models.Model):
 class Category(models.Model):
      name=models.CharField(max_length=50,verbose_name="Name")
      image=models.ImageField(verbose_name="Image")
+     
 class Project(models.Model):
     title=models.CharField(max_length=50,verbose_name="Title")
     description=models.TextField(max_length=260,verbose_name="Description")

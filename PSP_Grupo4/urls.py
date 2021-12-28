@@ -14,10 +14,25 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 # from django.conf.urls import include
+from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
+from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+
+from nucleo import views
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # path('nucleo/', include('nucleo.urls')),
+    path('accounts/',include('django.contrib.auth.urls')),
+    # path('',views.index, name="index"),
+    # path('register/', views.registerClient.as_view(), name="register"),
+    path('login/', views.login_view, name='login'),
+    # path('client',views.HomePageView.as_view(), name="client"),
+    # path('createClient/', views.ClientCreateView.as_view(), name='createClient'),
+    path('createClient/', views.FormularioClientView.index, name='createClient'),
+    path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
 ]
+
+
+urlpatterns += staticfiles_urlpatterns()

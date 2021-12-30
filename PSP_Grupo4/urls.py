@@ -25,7 +25,7 @@ from nucleo import views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('django.contrib.auth.urls')),
-    # path('',views.index, name="index"),
+    path('',views.index, name="index"),
     # path('register/', views.registerClient.as_view(), name="register"),
     path('login/', views.login_view, name='login'),
     # path('client',views.HomePageView.as_view(), name="client"),

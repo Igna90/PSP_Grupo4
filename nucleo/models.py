@@ -1,12 +1,12 @@
 from django.db import models
 from django.db.models.deletion import DO_NOTHING
-
+import datetime
 # Create your models here.
 
 
 class User(models.Model):
     id=models.AutoField(primary_key=True)
-    username=models.CharField(max_length=50,verbose_name="Name")
+    username=models.CharField(max_length=50,verbose_name="UserName")
     password=models.CharField(max_length=18,verbose_name="Password")
     
     def __str__(self):
@@ -23,8 +23,8 @@ class Client(models.Model):
     active=models.BooleanField(verbose_name="Active",null=True)
     idUser=models.ForeignKey(User,verbose_name="IdUser",on_delete=models.CASCADE)
     
-    def __str__(self):
-            return self.dni+" "+self.name+" "+self.surname+" "+self.address+" "+self.birthDate+" "+self.active+" "+self.idUser
+    # def __str__(self):
+    #         return self.dni+" "+self.name+" "+self.surname+" "+self.address+" "+self.birthDate.strftime('%m/%d/%Y')+" "+self.active+" "+self.idUser
     
 class Employees(models.Model):
     id=models.AutoField(primary_key=True)

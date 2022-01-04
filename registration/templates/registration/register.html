@@ -15,13 +15,12 @@
             <h2>Registro</h2>
             <form action="{% url 'guardarClient' %}" class="form" method="POST">
                 {% csrf_token %}
-                {{form2|crispy}}
                 {{form|crispy}}
             {% if field.errors %}
             {{ field.errors }}
             {% endif %}
             
-            <button type="submit" class="btn btn-primary btn-block" value="Confirmar"/>Registrar</button>
+            <button type="submit" class="btn btn-primary btn-block" value="Confirmar">Registrar</button>
         </div>
     </div>
 </div>

@@ -18,7 +18,6 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
-
 from nucleo import views
 
 
@@ -32,6 +31,7 @@ urlpatterns = [
     # path('createClient/', views.ClientCreateView.as_view(), name='createClient'),
     path('createClient/', views.FormularioClientView.index, name='createClient'),
     path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
+
 ]
 
 

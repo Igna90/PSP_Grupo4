@@ -2,9 +2,10 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
 from django.contrib.auth import authenticate,login
-from nucleo.models import User
+from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 
-from registration.forms import ClientForm, UserForm
+from registration.forms import UserForm
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -16,20 +17,15 @@ def index(request):
 
 class FormularioClientView(HttpRequest):
     def index(request):
-        clientForm = ClientForm()
         userForm = UserForm()
-        return render(request, "registration/register.html", {"form2":userForm,"form":clientForm})
+        return render(request, "registration/register.html", {"form":userForm})
     def procesar_formulario(request):
-        clientForm = ClientForm(request.POST)
         userForm = UserForm(request.POST)
-        
-        if request.method =='POST' and  userForm.is_valid() and clientForm.is_valid():
+        if request.method =='POST' and  userForm.is_valid():
             userForm.save()
-            clientForm.save()
             return redirect(('index'))
-        return render(request, "registration/register.html", {"form2":userForm,"form":clientForm})
-        
-
+        return render(request, "registration/register.html", {"form":userForm})
+            
 def login_view(request):
         if request.method=="POST":
             username=request.POST.get('username')

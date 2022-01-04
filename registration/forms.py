@@ -1,19 +1,19 @@
 from django import forms
 from nucleo.models import User
+from django.contrib.auth.forms import UserCreationForm
 
-class UserForm(forms.ModelForm):
+class UserForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username', 'password','dni', 'name', 'surname','address']
+        fields = ['username','dni', 'name', 'surname','address','birthDate']
         exclude = ("active",)
         widgets = { 
                    'username': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your UserName'}),
-                   'password': forms.PasswordInput (attrs={'class':'formset-field', 'placeholder': 'Write your Password'}),
                    'dni': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your DNI'}),
                    'name': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your name'}),
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
-                #    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
+                   'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
         }
 
 

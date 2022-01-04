@@ -6,18 +6,18 @@ from django.contrib.auth.models import AbstractUser
 
 class User(AbstractUser):
     id=models.AutoField(primary_key=True)
-    dni=models.CharField(max_length=9,verbose_name="DNI",default=False)
-    name=models.CharField(max_length=50,verbose_name="Name",default=False)
-    surname=models.CharField(max_length=50,verbose_name="Surname",default=False)
-    address=models.CharField(max_length=50,verbose_name="Address",default=False)
-    # birthDate=models.DateField(verbose_name="Birthday",default=True)
+    dni=models.CharField(max_length=9,verbose_name="DNI")
+    name=models.CharField(max_length=50,verbose_name="Name")
+    surname=models.CharField(max_length=50,verbose_name="Surname")
+    address=models.CharField(max_length=50,verbose_name="Address")
+    birthDate=models.DateField(verbose_name="Birthday")
     registerDate=models.DateTimeField(verbose_name="Date of register", auto_now=True)
     active=models.BooleanField(verbose_name="Active",null=True)
-    role_user = models.CharField(max_length=50,verbose_name="role",default=False)
+    role_user = models.CharField(max_length=50,verbose_name="role",default='client')
     
     
     def _str_(self):
-        return self.dni+" "+self.name+" "+self.surname+" "+self.address+" "+self.birthDate.strftime('%m/%d/%Y')+" "+self.active+" "+self.role_user
+        return self.dni+" "+self.name+" "+self.surname+" "+self.address+" "+self.birthDate+" "+self.active+" "+self.role_user
 
 # class User(models.Model):
 #     id=models.AutoField(primary_key=True)

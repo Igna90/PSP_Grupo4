@@ -2,10 +2,8 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
 from django.contrib.auth import authenticate,login
-from django.contrib.auth.models import User
-from django.contrib.auth.models import AbstractUser
-
-from registration.forms import UserForm
+from django.contrib.auth.decorators import login_required
+from registration.forms import UserForm, UserUpdateForm
 
 from django.contrib import messages
 from django.contrib.auth import logout
@@ -33,8 +31,24 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
-                messages.success(request, 'Bienvenido {}'.format(user.username))
+                messages.success(request, 'Bienvenid@ {}'.format(user.username))
                 return redirect('index')
             else:
                 messages.error(request, "Usuario o contraseña no validos")
         return render(request, "registration/login.html", {})
+ 
+@login_required    
+def profile(request):
+    if request.method=="POST":
+        form = UserUpdateForm(request.POST, instance=request.user)
+        if form.is_valid():
+            form.save()
+            # messages.success(request, f'El perfil ha sido actualizado')
+            return redirect('index')
+    else:
+        form = UserUpdateForm(instance=request.user)
+    
+    context = {
+        'form':form 
+    }
+    return render(request, 'nucleo/profile.html', context)

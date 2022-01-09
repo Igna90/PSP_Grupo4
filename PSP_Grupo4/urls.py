@@ -31,6 +31,7 @@ urlpatterns = [
     # path('createClient/', views.ClientCreateView.as_view(), name='createClient'),
     path('createClient/', views.FormularioClientView.index, name='createClient'),
     path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
+    path('editProfile/', views.profile, name='profile')
 
 ]
 

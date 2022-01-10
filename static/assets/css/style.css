@@ -10,7 +10,7 @@
 --------------------------------------------------------------*/
 body {
   font-family: "Open Sans", sans-serif;
-  color: #444444;
+  color: #fcfcfc;
 }
 
 a {
@@ -308,7 +308,7 @@ h1, h2, h3, h4, h5, h6 {
   background: linear-gradient(rgba(55, 142, 181, 0.5), rgba(55, 142, 181, 0.2)), url("../img/hero-bg.jpg") top center;
   background-size: cover;
   position: relative;
-  margin-bottom: -90px;
+  /* margin-bottom: -90px; */
 }
 #hero .hero-container {
   position: absolute;
@@ -333,6 +333,7 @@ h1, h2, h3, h4, h5, h6 {
   align-items: center;
   flex-direction: column;
   text-align: center;
+
 }
 
 #hero h1 {
@@ -1227,4 +1228,10 @@ section {
   #footer .footer-top .footer-info {
     margin: -20px 0 30px 0;
   }
+}
+/* .back{
+  background-color: #111;
+} */
+.asteriskField {
+  display: none;
 }

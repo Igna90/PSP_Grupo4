@@ -302,6 +302,14 @@ h1, h2, h3, h4, h5, h6 {
   position: relative;
   margin-bottom: -90px;
 }
+#h {
+  width: 100%;
+  height: 150vh;
+  background: linear-gradient(rgba(55, 142, 181, 0.5), rgba(55, 142, 181, 0.2)), url("../img/hero-bg.jpg") top center;
+  background-size: cover;
+  position: relative;
+  margin-bottom: -90px;
+}
 #hero .hero-container {
   position: absolute;
   bottom: 0;
@@ -314,6 +322,19 @@ h1, h2, h3, h4, h5, h6 {
   flex-direction: column;
   text-align: center;
 }
+#h .hero-container {
+  position: absolute;
+  bottom: 0;
+  top: 150px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+
 #hero h1 {
   margin: 0 0 10px 0;
   font-size: 64px;

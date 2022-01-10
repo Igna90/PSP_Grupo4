@@ -43,11 +43,16 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'info' %}
+          <strong><span>{{ message }}</span></strong>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
         {% if request.user.is_authenticated %}
           <h1 class="text-light"> Bienvenid@ {{user.username}} </h1>
         {% endif %}
-        <!-- Uncomment below if you prefer to use an image logo -->
-        <!-- <a href="index.html"><img src="assets/img/logo.png" alt="" class="img-fluid"></a>-->
       </div>
 
       <nav id="navbar" class="navbar">
@@ -61,31 +66,31 @@
               <li><a href="{% url 'profile' %}">Editar Perfil</a></li>
             </ul>
           </li>
-         <li><a class="nav-link" href="{% url 'logout' %}" style="color:#FF0000">Salir</a></li>
+          <li><a class="nav-link" href="{% url 'logout' %}" style="color:#FF0000">Salir</a></li>
           {% endif %}
           <li><a class="nav-link scrollto" href="#contact">Contact</a></li>
         </ul>
         <i class="bi bi-list mobile-nav-toggle"></i>
       </nav><!-- .navbar -->
-
     </div>
   </header><!-- End Header -->
 
   <!-- ======= Hero Section ======= -->
-  <section id="hero">
-    <div class="hero-container" data-aos="fade-up">
-      <h1>Proyecto Django </h1>
-      <h2>Ignacio & Alba</h2>
-      <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
-    </div>
-  </section><!-- End Hero -->
+    {% block content %}
+      <section id="hero">
+        <div class="hero-container" data-aos="fade-up">
+          <h1>Proyecto Django </h1>
+          <h2>Ignacio & Alba</h2>
+          <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a>
+        </div>
+      </section><!-- End Hero -->
+    {% endblock %}
 
   <main id="main">
 
     <!-- ======= About Section ======= -->
     <section id="about" class="about">
       <div class="container">
-
         <div class="row no-gutters">
           <div class="content col-xl-5 d-flex align-items-stretch" data-aos="fade-up">
             <div class="content">
@@ -103,12 +108,11 @@
                 <div class="col-md-6 icon-box" data-aos="fade-up" data-aos-delay="400">
                 </div>
               </div>
-            </div><!-- End .content-->
+            </div>
           </div>
         </div>
-
-      </div>
-    </section><!-- End About Section -->
+      </div> -->
+    </section>
 
     <!-- ======= Services Section ======= -->
     <section id="services" class="services">
@@ -264,7 +268,6 @@
     <!-- ======= Contact Section ======= -->
     <section id="contact" class="contact section-bg">
       <div class="container" data-aos="fade-up">
-
         <div class="section-title">
         </div>
 

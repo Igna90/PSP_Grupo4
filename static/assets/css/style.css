@@ -1259,9 +1259,9 @@ input::-moz-placeholder {
 #hint_id_username{
   visibility: hidden;
 }
-#hint_id_password1{
+/* #hint_id_password1{
   visibility: hidden;
-}
+} */
 .bot{
   background: linear-gradient(90deg, #CFF37D 0%, #7DE88C 100%);
   /* Shadow Dark · 8dp */
@@ -1309,22 +1309,26 @@ input::-moz-placeholder {
   padding-bottom: 10px;
 }
 #div_id_name label{
-  padding-top: 15px;
+  padding-top: 5px;
   padding-bottom: 10px;
 }
 #div_id_surname label{
-  padding-top: 15px;
+  padding-top: 5px;
   padding-bottom: 10px;
 }
 #div_id_address label{
-  padding-top: 15px;
+  padding-top: 5px;
   padding-bottom: 10px;
 }
 #div_id_birthDate label{
-  padding-top: 15px;
+  padding-top: 5px;
   padding-bottom: 10px;
 }
 #div_id_password1 label{
-  padding-top: 15px;
+  padding-top: 5px;
+  padding-bottom: 10px;
+}
+#div_id_username label{
+  padding-top: 5px;
   padding-bottom: 10px;
 }

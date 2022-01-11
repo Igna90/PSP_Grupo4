@@ -1287,6 +1287,15 @@ input::-moz-placeholder {
 #hero h2.st{
   color: #F9D4A3;
 }
+#h .hero-container h2{
+  color: #fff;
+  margin-bottom: 50px;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: -1px 0 2px #2f4d5a;
+
+}
 .sty{
   font-family: "Raleway", sans-serif;
   font-size: 13px;

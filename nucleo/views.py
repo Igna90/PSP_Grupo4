@@ -10,6 +10,7 @@ from django.contrib.auth import logout
 from django.http import HttpRequest
 
 
+
 def index(request):
     return render(request, "nucleo/index.html")
 
@@ -31,7 +32,6 @@ def login_view(request):
             user = authenticate(username=username, password=password)
             if user:
                 login(request, user)
-                messages.success(request, 'Bienvenid@ {}'.format(user.username))
                 return redirect('index')
             else:
                 messages.error(request, "Usuario o contraseña no validos")
@@ -52,3 +52,9 @@ def profile(request):
         'form':form 
     }
     return render(request, 'nucleo/profile.html', context)
+
+def logout_request(request):
+     logout(request)
+     messages.info(request,"Has salido satisfactoriamente")
+     return redirect("index")
+     

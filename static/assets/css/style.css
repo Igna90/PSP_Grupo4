@@ -307,7 +307,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 #h {
   width: 100%;
-  height: 150vh;
+  height: 170vh;
   /* background: linear-gradient(rgba(55, 142, 181, 0.5), rgba(55, 142, 181, 0.2)), url("../img/hero-bg.jpg") top center; */
   background-color:#3E4345; 
   background-size: cover;
@@ -1304,4 +1304,27 @@ input::-moz-placeholder {
 }
 .ss{
   color: linear-gradient(90deg, #CFF37D 0%, #7DE88C 100%);
+}
+#div_id_dni label{
+  padding-bottom: 10px;
+}
+#div_id_name label{
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+#div_id_surname label{
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+#div_id_address label{
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+#div_id_birthDate label{
+  padding-top: 15px;
+  padding-bottom: 10px;
+}
+#div_id_password1 label{
+  padding-top: 15px;
+  padding-bottom: 10px;
 }

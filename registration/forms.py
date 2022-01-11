@@ -6,9 +6,15 @@ class UserForm(UserCreationForm):
     class Meta:
         model = User
         fields = ['username','dni', 'name', 'surname','address','birthDate']
+        labels = {
+            'name': 'Nombre',
+            'surname': 'Apellidos',
+            'address': 'Dirección',
+            'birthDate': 'Fecha de Nacimiento'
+        }
         exclude = ("active",)
         widgets = { 
-                   'username': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your UserName'}),
+                   'username': forms.TextInput (attrs={'class':'formset-field','placeholder': 'Write your UserName'}),
                    'dni': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your DNI'}),
                    'name': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your name'}),
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),

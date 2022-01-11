@@ -18,6 +18,7 @@ from django.conf.urls import include
 from django.contrib import admin
 from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
+from django.contrib.auth.decorators import login_required
 from nucleo import views
 
 
@@ -28,7 +29,7 @@ urlpatterns = [
     path('login/', views.login_view, name='login'),
     path('createClient/', views.FormularioClientView.index, name='createClient'),
     path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
-    path('editProfile/', views.profile, name='profile'),
+    path('editProfile/', login_required(views.profile), name='profile'),
     path('logout/', views.logout_request, name='logout'),
 ]
 

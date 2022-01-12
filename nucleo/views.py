@@ -55,6 +55,6 @@ def profile(request):
 
 def logout_request(request):
      logout(request)
-     messages.info(request,"Has salido satisfactoriamente")
+     messages.success(request,"Has salido satisfactoriamente")
      return redirect("index")
      

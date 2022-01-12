@@ -45,11 +45,12 @@
       <div class="logo">
         {% if messages %}
         {% for message in messages %}
-        {% if message.tags == 'info' %}
+        {% if message.tags == 'success' %}
           <strong><span>{{ message }}</span></strong>
         {% endif %}
         {% endfor %}
         {% endif %}
+
         {% if request.user.is_authenticated %}
           <h1 class="text-light"> Bienvenid@ {{user.username}} </h1>
         {% endif %}

@@ -4,11 +4,9 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from registration.forms import UserForm, UserUpdateForm
-
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest
-
 
 
 def index(request):
@@ -22,10 +20,12 @@ class FormularioClientView(HttpRequest):
         userForm = UserForm(request.POST)
         if request.method =='POST' and  userForm.is_valid():
             userForm.save()
+            messages.success(request, "El usuario ha sido registrado correctamente, vaya a acceder para comenzar")
             return redirect(('index'))
         return render(request, "registration/register.html", {"form":userForm})
             
-def login_view(request):
+class login_view(HttpRequest):
+    def loginUser(request):
         if request.method=="POST":
             username=request.POST.get('username')
             password=request.POST.get('password')
@@ -43,7 +43,7 @@ def profile(request):
         form = UserUpdateForm(request.POST, instance=request.user)
         if form.is_valid():
             form.save()
-            # messages.success(request, f'El perfil ha sido actualizado')
+            messages.success(request, "Tu usuario ha sido editado con exito, por seguridad necesitas volver a loguearte.")
             return redirect('index')
     else:
         form = UserUpdateForm(instance=request.user)

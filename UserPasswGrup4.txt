@@ -1,0 +1,10 @@
+Aqui dejamos usuario y contraseña de nuestra aplicación web.
+
+Usuario: IgnAlba
+Password: 123456
+
+Nota: Es posible que al intentar arrancar nuestro proyecto, solicite la incorporación del modulo crispy-forms
+
+Aquí abajo dejamos el comando correspondiente por si fuera necesario.
+
+        pip install django-crispy-forms

@@ -36,6 +36,7 @@ class login_view(HttpRequest):
             password=request.POST.get('password')
             user = authenticate(username=username, password=password)
             if user:
+                item = User.objects
                 login(request, user)
                 return redirect('index')
             else:
@@ -71,3 +72,11 @@ def EmployeeList(request):
     }
 
     return render(request, 'nucleo/employee_list.html', context )
+
+def UserList(request):
+    
+    items = User.objects.filter(role_user='Cliente')
+    
+    context = {
+        'items' : items,
+    }

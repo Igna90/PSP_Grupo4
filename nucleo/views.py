@@ -1,12 +1,17 @@
+from msilib.schema import ListView
+from re import template
+from tkinter.tix import Select
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
+from nucleo.models import User
 from registration.forms import UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest
+from django.http import HttpRequest, request
+from django.views.generic.list import ListView
 
 
 def index(request):
@@ -58,3 +63,11 @@ def logout_request(request):
      messages.success(request,"Has salido satisfactoriamente")
      return redirect("index")
      
+def EmployeeList(request):
+    items = User.objects.filter(role_user='Empleado')
+    
+    context={
+        'items': items,
+    }
+
+    return render(request, 'nucleo/employee_list.html', context )

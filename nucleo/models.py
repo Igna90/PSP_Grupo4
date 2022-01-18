@@ -7,9 +7,9 @@ from django.utils.translation import gettext_lazy as _
 
 class User(AbstractUser):
     class UserType(models.TextChoices):
-        Client = 'Cl', _('Cliente')
-        Employee = 'Em', _('Empleado')
-        Admin = 'Ad', _('Administrador')
+        Client = 'Cliente', _('Cliente')
+        Employee = 'Empleado', _('Empleado')
+        Admin = 'Administrador', _('Administrador')
         
     id=models.AutoField(primary_key=True)
     dni=models.CharField(max_length=9,verbose_name="DNI")

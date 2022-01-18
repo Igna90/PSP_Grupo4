@@ -1,0 +1,31 @@
+<title>Listado empleados</title>
+<div class="panel panel-default">
+    <table>
+<thead>
+    <tr>
+        <th>dni</th>
+        <th>name</th>
+        <th>surname</th>
+        <th>address</th>
+        <th>birthDate</th>
+        <th>registerDate</th>
+        <th>Active</th>
+        <th>role</th>
+    </tr>
+    </thead>
+    <tbody>
+        {% for item in items %}
+        <tr>
+            <td>{{ item.dni }}</td>
+            <td>{{ item.name }}</td>
+            <td>{{ item.surname }}</td>
+            <td>{{ item.address }}</td>
+            <td>{{ item.birthDate }}</td>
+            <td>{{ item.registerDate }}</td>
+            <td>{{ item.active }}</td>
+            <td>{{ item.role_user }}</td>
+
+        </tr>
+            {% endfor %}
+    </tbody>
+</table>

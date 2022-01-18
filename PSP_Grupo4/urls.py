@@ -31,6 +31,7 @@ urlpatterns = [
     path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
     path('editProfile/', login_required(views.profile), name='profile'),
     path('logout/', views.logout_request, name='logout'),
+    path('employeeList/', views.EmployeeList, name='employeeList'),
 ]
 
 

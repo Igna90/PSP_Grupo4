@@ -26,6 +26,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('django.contrib.auth.urls')),
     path('',views.index, name="index"),
+    path('userList/',views.UserList, name='userList'),
     path('login/', views.login_view.loginUser, name='login'),
     path('createClient/', views.FormularioClientView.index, name='createClient'),
     path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),

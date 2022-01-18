@@ -67,8 +67,8 @@
                     <li class="dropdown"><a href="#"><span> Configuración </span> <i class="bi bi-chevron-down"></i></a>
                         <ul>
                             {% if user.role_user == "Administrador" %}
-                            <li><a href="{% url 'index' %}">Clientes</a></li>
-                            <li><a href="{% url 'index' %}">Empleados</a></li>
+                            <li><a href="{% url 'userList' %}">Clientes</a></li>
+                            <li><a href="{% url 'employeeList' %}">Empleados</a></li>
                             {% endif %}
                             <li><a href="{% url 'profile' %}">Editar Perfil</a></li>
                         </ul>
@@ -82,15 +82,97 @@
         </div>
     </header>
     <!-- End Header -->
-
     <body>
         <section id="hero">
-            <div class="hero-container" data-aos="fade-up">
-                <h1 class="st">Proyecto Django </h1>
-                <h2 class="st">Ignacio & Alba</h2>
-                <!-- <a href="#about" class="btn-get-started scrollto"><i class="bx bx-chevrons-down"></i></a> -->
-            </div>
+            <!-- <div class="hero-container"> -->
+                <div class="row">
+                    <div class="col-2">
+                        <h5>DNI</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>Nombre</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>Apellidos</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>Direccion</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>Fecha de Nacimiento</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>Fecha de Nacimiento</h5>
+                    </div>
+                </div>
+                <div class="row">
+                    {% for item in items %}
+                    <div class="col-2">
+                        <h5>{{ item.dni }}</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>{{ item.name }}</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>{{ item.surname }}</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>{{ item.address }}</h5>
+                    </div>
+                    <div class="col-2">
+                        <h5>{{ item.birthDate }}</h5>
+                    </div>
+                    {% endfor %}
+                </div>
+                <!-- <table>
+                    <thead>
+                        <tr>
+                            <th>Dni</th>
+                            <th>Nombre</th>
+                            <th>Apellidos</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.dni }}</td>
+                                <td>{{ item.name }}</td>
+                                <td>{{ item.surname }}</td>
+                            </tr>
+
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Dirección</th>
+                                <th>Fecha de Nacimiento</th>
+                                <th>Fecha de Registro</th>
+                                <th>Activo</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.address }}</td>
+                                <td>{{ item.birthDate }}</td>
+                                <td>{{ item.registerDate }}</td>
+                                <td>{{ item.active }}</td>
+                                <td>{{ item.role_user }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+
+                    </table> -->
+            <!-- </div> -->
         </section>
+        <main id="main">
+            <section id="contact" class="contact section-bg">
+
+            </section>
+       </main>
         <!-- ======= Footer ======= -->
         <footer id="footer">
             <div class="footer-top">

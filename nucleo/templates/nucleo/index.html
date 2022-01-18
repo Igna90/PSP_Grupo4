@@ -66,8 +66,8 @@
           <li class="dropdown"><a href="#"><span> Configuración </span> <i class="bi bi-chevron-down"></i></a>
             <ul>
               {% if user.role_user == "Administrador" %}
-              <li><a href="{% url 'index' %}">Clientes</a></li>
-              <li><a href="{% url 'index' %}">Empleados</a></li>
+              <li><a href="{% url 'userList' %}">Clientes</a></li>
+              <li><a href="{% url 'employeeList' %}">Empleados</a></li>
               {% endif %}
               <li><a href="{% url 'profile' %}">Editar Perfil</a></li>
             </ul>

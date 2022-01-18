@@ -80,3 +80,5 @@ def UserList(request):
     context = {
         'items' : items,
     }
+    
+    return render(request,'nucleo/user_list.html',context)

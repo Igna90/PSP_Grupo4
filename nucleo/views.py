@@ -84,20 +84,20 @@ def UserList(request):
     
     return render(request,'nucleo/user_list.html',context)
 
-# class ClientDeleteView(DeleteView):
-#     model= User
-#     template_name='nucleo/delete.html'
-#     succes_url = reverse_lazy('user:user_list')
-#     url_redirect = succes_url
+class ClientDeleteView(DeleteView):
+    model= User
+    template_name='nucleo/delete.html'
+    succes_url = reverse_lazy('user:user_list')
+    url_redirect = succes_url
     
-#     def dispatch(self, request, *args, **kwargs):
-#         self.object = self.get_object()
-#         return super().dispatch(request, *args, **kwargs)
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
     
-#     def post(self, request, *args, **kwargs):
-#         data={}
-#         try:
-#             self.object.delete()
-#         except Exception as e:
-#             data['error'] = str(e)
-#         return super().post(request, *args, **kwargs)
+    def post(self, request, *args, **kwargs):
+        data={}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return super().post(request, *args, **kwargs)

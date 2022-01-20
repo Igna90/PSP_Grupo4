@@ -26,7 +26,7 @@ class UserForm(UserCreationForm):
 class UserUpdateForm(UserCreationForm):
     class Meta:
         model = User
-        fields = ['username','dni', 'name', 'surname','address','birthDate']
+        fields = ['username','dni', 'name', 'surname','address','birthDate','password']
         exclude = ("active",)
         widgets = { 
                    'username': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your UserName'}),
@@ -35,5 +35,5 @@ class UserUpdateForm(UserCreationForm):
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
                    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
-                   
+                   'password':forms.PasswordInput(attrs={'class':'formset-field'}),
         }

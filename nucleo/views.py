@@ -65,7 +65,6 @@ def logout_request(request):
      
 def EmployeeList(request):
     items = User.objects.filter(role_user='Empleado')
-    
     context={
         'items': items,
     }

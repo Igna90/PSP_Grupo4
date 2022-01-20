@@ -1,4 +1,5 @@
 from msilib.schema import ListView
+from multiprocessing.connection import Client
 from re import template
 from tkinter.tix import Select
 from django.shortcuts import redirect, render
@@ -11,7 +12,7 @@ from registration.forms import UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, request
-from django.views.generic.list import ListView
+from django.views.generic import DeleteView
 
 
 def index(request):
@@ -36,6 +37,7 @@ class login_view(HttpRequest):
             password=request.POST.get('password')
             user = authenticate(username=username, password=password)
             if user:
+                item = User.objects
                 login(request, user)
                 return redirect('index')
             else:
@@ -65,8 +67,37 @@ def logout_request(request):
      
 def EmployeeList(request):
     items = User.objects.filter(role_user='Empleado')
+    
     context={
         'items': items,
     }
 
     return render(request, 'nucleo/employee_list.html', context )
+
+def UserList(request):
+    
+    items = User.objects.filter(role_user='Cliente')
+    
+    context = {
+        'items' : items,
+    }
+    
+    return render(request,'nucleo/user_list.html',context)
+
+class ClientDeleteView(DeleteView):
+    model= User
+    template_name='nucleo/delete.html'
+    succes_url = reverse_lazy('user:user_list')
+    url_redirect = succes_url
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        data={}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return super().post(request, *args, **kwargs)

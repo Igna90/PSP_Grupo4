@@ -1,0 +1,12 @@
+{% extends 'nucleo/index.html' %}
+    {% block content %}
+    <section id="hero">
+        <div class="hero-container" data-aos="fade-up">
+            <form method="post">
+                {% csrf_token %}
+                <p>¿Estás seguro de que deseas eliminar al usuario "{{object}}"?</p>
+                <input class="bot" type="submit" value="Confirmar">
+            </form>
+        </div>
+    </section>
+    {% endblock %}

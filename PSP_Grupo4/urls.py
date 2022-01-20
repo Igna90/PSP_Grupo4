@@ -26,12 +26,14 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/',include('django.contrib.auth.urls')),
     path('',views.index, name="index"),
+    path('userList/',views.UserList, name='userList'),
     path('login/', views.login_view.loginUser, name='login'),
     path('createClient/', views.FormularioClientView.index, name='createClient'),
     path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
     path('editProfile/', login_required(views.profile), name='profile'),
     path('logout/', views.logout_request, name='logout'),
     path('employeeList/', views.EmployeeList, name='employeeList'),
+    path('deleteClient/<int:pk>',views.ClientDeleteView.as_view(), name='deleteClient')
 ]
 
 

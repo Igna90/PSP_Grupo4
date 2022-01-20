@@ -1324,11 +1324,30 @@ input::-moz-placeholder {
   padding-top: 5px;
   padding-bottom: 10px;
 }
+
 #div_id_password1 label{
   padding-top: 5px;
   padding-bottom: 10px;
 }
+
 #div_id_username label{
   padding-top: 5px;
   padding-bottom: 10px;
+}
+
+.ss{
+  padding-top: 50px;
+  text-align: center;
+}
+#tt tr{
+  background-color: #5E6366;
+}
+#tt td{
+  color: #fff;
+}
+.a{
+  background-color: #3E4345;
+}
+#tt th{
+  color: #7DE88C;
 }

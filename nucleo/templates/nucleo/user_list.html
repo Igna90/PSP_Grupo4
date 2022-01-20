@@ -1,0 +1,44 @@
+{% extends 'nucleo/index.html' %}
+
+    {% block content %}
+    <section id="hero">
+        <div class="container">
+            <h2 class="ss">Clientes</h2>
+            <table id="tt" class="table table-hover">
+              <thead>
+                <tr>
+                  <th>DNI</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Dirección</th>
+                  <th>Fecha de Nacimiento</th>
+                  <th>Fecha de Registro</th>
+                  <th>Activo</th>
+                  <th></th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr class="a">
+                  <td class=>{{ item.dni }}</td>
+                  <td>{{ item.name }}</td>
+                  <td >{{ item.surname }}</td>
+                  <td>{{ item.address }}</td>
+                  <td>{{ item.birthDate }}</td>
+                  <td>{{ item.registerDate }}</td>
+                  <td>{{ item.active }}</td>
+                  <td>
+                    <button class="btn btn-primary bot"><a href="{% url 'deleteClient' item.id %}">Eliminar</a></button>
+                  </td>
+                  <td>
+                    <button class="btn btn-primary bot">Editar</button>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+        </div>
+    </section>
+    {% endblock %}            
+ 

@@ -33,6 +33,7 @@ urlpatterns = [
     path('editProfile/', login_required(views.profile), name='profile'),
     path('logout/', views.logout_request, name='logout'),
     path('employeeList/', views.EmployeeList, name='employeeList'),
+    path('deleteClient/',views.ClientDelete, name='deleteClient')
 ]
 
 

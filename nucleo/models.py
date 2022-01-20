@@ -37,6 +37,9 @@ class Category(models.Model):
     class Meta:
         verbose_name="Categoria"
         verbose_name_plural="Categorias"
+        
+    def _str_(self):
+        return self.name+" "+self.image
      
 class Project(models.Model):
     id=models.AutoField(primary_key=True)

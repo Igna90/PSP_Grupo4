@@ -33,10 +33,12 @@ urlpatterns = [
     path('editProfile/', login_required(views.profile), name='profile'),
     path('logout/', login_required(views.logout_request), name='logout'),
     path('employeeList/', login_required(views.EmployeeList), name='employeeList'),
-    path('deleteClient/<int:pk>',login_required(views.ClientDeleteView.as_view()), name='deleteClient'),
+    path('deleteClient/<int:pk>',login_required(views.UserDeleteView.as_view()), name='deleteUser'),
     path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
     path('activeUser/<int:pk>', login_required(views.ActiveUser) , name='activeUser'),
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
+    path('createEmployee/', views.FormularioEmployeeView.index, name='createEmployee'),
+    path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
     
 ]
 

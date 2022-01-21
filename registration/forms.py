@@ -21,7 +21,7 @@ class UserForm(UserCreationForm):
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
                    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
-                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your birthdate'}),
+                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
         }
 
 class UserUpdateForm(UserCreationForm):
@@ -36,6 +36,27 @@ class UserUpdateForm(UserCreationForm):
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
                    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
-                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your birthdate'}),
+                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
                    
+        }
+        
+class EmployeeForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username','dni', 'name', 'surname','address','biography']
+        labels = {
+            'name': 'Nombre',
+            'surname': 'Apellidos',
+            'address': 'Dirección',
+            'biography': 'Biografía',
+        }
+        exclude = ("active","birthDate","registerDate")
+        widgets = { 
+                   'username': forms.TextInput (attrs={'class':'formset-field','placeholder': 'Write your UserName'}),
+                   'dni': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your DNI'}),
+                   'name': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your name'}),
+                   'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
+                   'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
+                   'bioraphy': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your biography'}),
+                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
         }

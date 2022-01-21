@@ -9,7 +9,7 @@ from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.views import View
 from nucleo.models import User
-from registration.forms import UserForm, UserUpdateForm
+from registration.forms import EmployeeForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
@@ -30,6 +30,20 @@ class FormularioClientView(HttpRequest):
             messages.success(request, "El usuario ha sido registrado correctamente, vaya a acceder para comenzar")
             return redirect(('index'))
         return render(request, "registration/register.html", {"form":userForm})
+
+class FormularioEmployeeView(HttpRequest):
+    def index(request):
+        userForm = EmployeeForm()
+        return render(request, "registration/create_emp.html", {"form":userForm})
+    def procesar_formulario(request):
+        userForm = EmployeeForm(request.POST)
+        if request.method =='POST' and  userForm.is_valid():
+            formulario = userForm.save()
+            formulario.role_user = 'Empleado'
+            formulario.save()
+            messages.success(request, "El usuario ha sido registrado correctamente")
+            return redirect(('index'))
+        return render(request, "registration/create_emp.html", {"form":userForm})
             
 class login_view(HttpRequest):
     def loginUser(request):
@@ -85,7 +99,7 @@ def UserList(request):
     
     return render(request,'nucleo/user_list.html',context)
 
-class ClientDeleteView(DeleteView):
+class UserDeleteView(DeleteView):
     model= User
     template_name='nucleo/delete.html'
     succes_url = reverse_lazy('nucleo:user_list')
@@ -101,7 +115,7 @@ class ClientDeleteView(DeleteView):
             self.object.delete()
         except Exception as e:
             data['error'] = str(e)
-        return redirect('userList')
+        return HttpResponseRedirect('/userList/')
     
 class UserUpdateView(UpdateView):
         model= User
@@ -116,8 +130,11 @@ class UserUpdateView(UpdateView):
             return super().dispatch(request, *args, **kwargs)
         
         def get_success_url(self):
-            return reverse_lazy('userList')
-
+            if(self.object.role_user=="Cliente"):
+                return reverse_lazy('userList')
+            else:
+                return HttpResponseRedirect('/employeeList/')
+            
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)
     u.active = True

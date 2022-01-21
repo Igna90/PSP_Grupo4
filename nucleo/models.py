@@ -16,7 +16,7 @@ class User(AbstractUser):
     name=models.CharField(max_length=50,verbose_name="Nombre")
     surname=models.CharField(max_length=50,verbose_name="Apellido")
     address=models.CharField(max_length=50,verbose_name="Dirección")
-    birthDate=models.DateField(verbose_name="Fecha de cumpleaños")
+    birthDate=models.DateField(verbose_name="Fecha de cumpleaños",null=True)
     registerDate=models.DateTimeField(verbose_name="Fecha de registro", auto_now=True)
     biography = models.CharField(max_length=400, verbose_name = "Biografía", null=True)
     active=models.BooleanField(verbose_name="Activo",default=False)

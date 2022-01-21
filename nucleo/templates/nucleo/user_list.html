@@ -7,13 +7,14 @@
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
+                  <th>Id</th>
                   <th>DNI</th>
                   <th>Nombre</th>
                   <th>Apellidos</th>
                   <th>Dirección</th>
                   <th>Fecha de Nacimiento</th>
                   <th>Fecha de Registro</th>
-                  <th>Activo</th>
+                  <th></th>
                   <th></th>
                   <th></th>
                 </tr>
@@ -21,7 +22,8 @@
               <tbody>
                 {% for item in items %}
                 <tr class="a">
-                  <td class=>{{ item.dni }}</td>
+                  <td>{{ item.id }}</td>
+                  <td>{{ item.dni }}</td>
                   <td>{{ item.name }}</td>
                   <td >{{ item.surname }}</td>
                   <td>{{ item.address }}</td>
@@ -47,6 +49,7 @@
                 {% endfor %}
               </tbody>
             </table>
+            <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createClient' %}">Crear Cliente</a></button>
         </div>
     </section>   
     {% endblock %}     

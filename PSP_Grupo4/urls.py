@@ -35,8 +35,8 @@ urlpatterns = [
     path('employeeList/', login_required(views.EmployeeList), name='employeeList'),
     path('deleteClient/<int:pk>',login_required(views.ClientDeleteView.as_view()), name='deleteClient'),
     path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
-    path('activeUser/<int:pk>', login_required(views.UserActiveView.as_view()) , name='activeUser'),
-    path('deactiveUser/<int:pk>', login_required(views.UserDeactiveView.as_view()) , name='deactiveUser'),
+    path('activeUser/<int:pk>', login_required(views.ActiveUser) , name='activeUser'),
+    path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
     
 ]
 

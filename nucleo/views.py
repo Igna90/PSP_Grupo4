@@ -7,11 +7,12 @@ from django.urls import reverse_lazy
 
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
+from django.views import View
 from nucleo.models import User
 from registration.forms import UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, JsonResponse, request
+from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
 from django.views.generic import DeleteView,UpdateView, DetailView
 
 
@@ -116,40 +117,16 @@ class UserUpdateView(UpdateView):
         
         def get_success_url(self):
             return reverse_lazy('userList')
-        
-class UserActiveView(DetailView):
-    
-    model = User
-    
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object
-        return super().dispatch(request, *args, **kwargs)
 
-    def get_context_data(self, **kwargs):
-        context = super (UserActiveView, self).get_context_data(**kwargs)
-        obj = self.get_object()
-        obj.active = True
-        obj.save()
-        return context
-    
-    def get_success_url(self):
-        return reverse_lazy('userList')
+def ActiveUser(request,pk):
+    u = User.objects.get(id=pk)
+    u.active = True
+    u.save()
+    return HttpResponseRedirect('/userList/')
 
-class UserDeactiveView(DetailView):
-    
-    model = User
-    def dispatch(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        self.object
-        return super().dispatch(request, *args, **kwargs)
+def DeactiveUser(request,pk):
+    u = User.objects.get(id=pk)
+    u.active = False
+    u.save()
+    return HttpResponseRedirect('/userList/')
 
-    def get_context_data(self, **kwargs):
-        context = super (UserDeactiveView, self).get_context_data(**kwargs)
-        obj = self.get_object()
-        obj.active = False
-        obj.save()
-        return context
-    
-    def get_success_url(self):
-        return reverse_lazy('userList')

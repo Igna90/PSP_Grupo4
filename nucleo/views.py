@@ -135,6 +135,9 @@ class UserUpdateView(UpdateView):
             else:
                 return HttpResponseRedirect('/employeeList/')
             
+# class ProjectListView(ListView):
+    
+      
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)
     u.active = True

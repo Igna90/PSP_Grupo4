@@ -39,6 +39,7 @@ urlpatterns = [
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
     path('createEmployee/', views.FormularioEmployeeView.index, name='createEmployee'),
     path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
+    # path('listProjects/', views.ProjectsListView.as_view(), name='listProjects'),
     
 ]
 

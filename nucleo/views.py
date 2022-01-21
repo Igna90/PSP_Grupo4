@@ -121,8 +121,8 @@ class UserUpdateView(UpdateView):
         model= User
         form_class = UserForm
         template_name='nucleo/update.html'
-        succes_url = reverse_lazy('nucleo:user_list')
-        url_redirect = succes_url
+        # succes_url = reverse_lazy('nucleo:user_list')
+        # url_redirect = succes_url
         
         def dispatch(self, request, *args, **kwargs):
             self.object = self.get_object()
@@ -131,7 +131,7 @@ class UserUpdateView(UpdateView):
         
         def get_success_url(self):
             if(self.object.role_user=="Cliente"):
-                return reverse_lazy('userList')
+                return HttpResponseRedirect('/userList/')
             else:
                 return HttpResponseRedirect('/employeeList/')
             

@@ -21,6 +21,7 @@ class UserForm(UserCreationForm):
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
                    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
+                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your birthdate'}),
         }
 
 class UserUpdateForm(UserCreationForm):
@@ -35,5 +36,6 @@ class UserUpdateForm(UserCreationForm):
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
                    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
+                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your birthdate'}),
                    
         }

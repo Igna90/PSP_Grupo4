@@ -27,6 +27,15 @@ class User(AbstractUser):
     
     def _str_(self):
         return self.dni+" "+self.name+" "+self.surname+""+self.birthDate+" "+self.address+"  "+self.active+" "+self.role_user
+    
+    # def save(self,*args,**kwargs):
+    #     if self.pk is None:
+    #         self.set_password(self.password)
+    #     else:
+    #         user = User.objects.get(pk=self.pk)
+    #         if user.password == self.password:
+    #             self.set_password(self.password)
+    #     super().save(*args,**kwargs)
 
     
 class Category(models.Model):
@@ -65,3 +74,4 @@ class Participate(models.Model):
     class Meta:
         verbose_name="Participa"
         verbose_name_plural="Participan"
+

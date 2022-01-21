@@ -32,7 +32,7 @@
                     <button class="btn btn-primary bot"><a href="{% url 'deleteClient' item.id %}">Eliminar</a></button>
                   </td>
                   <td>
-                    <button class="btn btn-primary bot">Editar</button>
+                    <button class="btn btn-primary bot"><a href="{% url 'updateUser' item.id %}">Editar</a></button>
                   </td>
                 </tr>
                 {% endfor %}

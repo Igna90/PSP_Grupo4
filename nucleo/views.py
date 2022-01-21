@@ -11,8 +11,8 @@ from nucleo.models import User
 from registration.forms import UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, request
-from django.views.generic import DeleteView
+from django.http import HttpRequest, JsonResponse, request
+from django.views.generic import DeleteView,UpdateView
 
 
 def index(request):
@@ -87,7 +87,7 @@ def UserList(request):
 class ClientDeleteView(DeleteView):
     model= User
     template_name='nucleo/delete.html'
-    succes_url = reverse_lazy('user:user_list')
+    succes_url = reverse_lazy('nucleo:user_list')
     url_redirect = succes_url
     
     def dispatch(self, request, *args, **kwargs):
@@ -100,4 +100,19 @@ class ClientDeleteView(DeleteView):
             self.object.delete()
         except Exception as e:
             data['error'] = str(e)
-        return super().post(request, *args, **kwargs)
+        return redirect('userList')
+    
+class UserUpdateView(UpdateView):
+        model= User
+        form_class = UserForm
+        template_name='nucleo/update.html'
+        succes_url = reverse_lazy('nucleo:user_list')
+        url_redirect = succes_url
+        
+        def dispatch(self, request, *args, **kwargs):
+            self.object = self.get_object()
+            self.object
+            return super().dispatch(request, *args, **kwargs)
+        
+        def get_success_url(self):
+            return reverse_lazy('userList')

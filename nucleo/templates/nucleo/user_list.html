@@ -27,7 +27,16 @@
                   <td>{{ item.address }}</td>
                   <td>{{ item.birthDate }}</td>
                   <td>{{ item.registerDate }}</td>
-                  <td>{{ item.active }}</td>
+                  {%if item.active == null %}
+                  <td>
+                    <button class="btn btn-primary bot"><a href="{% url 'activeUser' item.id %}">Activar</a></button>
+                  </td>
+                  {% endif %}
+                  <!-- {%if item.active == 1 %}
+                  <td>
+                    <button class="btn btn-primary bot"><a href="{% url 'deactiveUser' item.id %}">Desactivar</a></button>
+                  </td>
+                  {% endif %} -->
                   <td>
                     <button class="btn btn-primary bot"><a href="{% url 'deleteClient' item.id %}">Eliminar</a></button>
                   </td>
@@ -39,6 +48,6 @@
               </tbody>
             </table>
         </div>
-    </section>
-    {% endblock %}            
+    </section>   
+    {% endblock %}     
  

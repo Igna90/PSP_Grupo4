@@ -12,7 +12,7 @@ from registration.forms import UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, JsonResponse, request
-from django.views.generic import DeleteView,UpdateView
+from django.views.generic import DeleteView,UpdateView, DetailView
 
 
 def index(request):
@@ -116,3 +116,29 @@ class UserUpdateView(UpdateView):
         
         def get_success_url(self):
             return reverse_lazy('userList')
+        
+class UserActiveView(DetailView):
+    model = User
+
+    def get_context_data(self, **kwargs):
+        context = super (UserActiveView, self).get_context_data(**kwargs)
+        obj = self.get_object()
+        obj.active = False
+        obj.save()
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('userList')
+
+class UserDeactiveView(DetailView):
+    model = User
+
+    def get_context_data(self, **kwargs):
+        context = super (UserActiveView, self).get_context_data(**kwargs)
+        obj = self.get_object()
+        obj.active = True
+        obj.save()
+        return context
+    
+    def get_success_url(self):
+        return reverse_lazy('userList')

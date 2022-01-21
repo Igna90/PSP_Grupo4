@@ -18,7 +18,8 @@ class User(AbstractUser):
     address=models.CharField(max_length=50,verbose_name="Dirección")
     birthDate=models.DateField(verbose_name="Fecha de cumpleaños")
     registerDate=models.DateTimeField(verbose_name="Fecha de registro", auto_now=True)
-    active=models.BooleanField(verbose_name="Activo",null=True)
+    biography = models.CharField(max_length=400, verbose_name = "Biografía", null=True)
+    active=models.BooleanField(verbose_name="Activo",default=False)
     role_user = models.CharField(max_length=50,verbose_name="role",choices=UserType.choices,default=UserType.Client)
     
     class Meta:

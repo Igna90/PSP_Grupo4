@@ -27,21 +27,21 @@
                   <td>{{ item.address }}</td>
                   <td>{{ item.birthDate }}</td>
                   <td>{{ item.registerDate }}</td>
-                  {%if item.active == null %}
+                  {%if item.active == False %}
                   <td>
-                    <button class="btn btn-primary bot"><a href="{% url 'activeUser' item.id %}">Activar</a></button>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'activeUser' item.id %}">Activar</a></button>
                   </td>
                   {% endif %}
-                  <!-- {%if item.active == 1 %}
+                  {%if item.active == True %}
                   <td>
-                    <button class="btn btn-primary bot"><a href="{% url 'deactiveUser' item.id %}">Desactivar</a></button>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deactiveUser' item.id %}">Desactivar</a></button>
                   </td>
-                  {% endif %} -->
+                  {% endif %}
                   <td>
-                    <button class="btn btn-primary bot"><a href="{% url 'deleteClient' item.id %}">Eliminar</a></button>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteClient' item.id %}">Eliminar</a></button>
                   </td>
                   <td>
-                    <button class="btn btn-primary bot"><a href="{% url 'updateUser' item.id %}">Editar</a></button>
+                    <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateUser' item.id %}">Editar</a></button>
                   </td>
                 </tr>
                 {% endfor %}

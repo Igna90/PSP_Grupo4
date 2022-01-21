@@ -118,12 +118,18 @@ class UserUpdateView(UpdateView):
             return reverse_lazy('userList')
         
 class UserActiveView(DetailView):
+    
     model = User
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super (UserActiveView, self).get_context_data(**kwargs)
         obj = self.get_object()
-        obj.active = False
+        obj.active = True
         obj.save()
         return context
     
@@ -131,12 +137,17 @@ class UserActiveView(DetailView):
         return reverse_lazy('userList')
 
 class UserDeactiveView(DetailView):
+    
     model = User
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        self.object
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
-        context = super (UserActiveView, self).get_context_data(**kwargs)
+        context = super (UserDeactiveView, self).get_context_data(**kwargs)
         obj = self.get_object()
-        obj.active = True
+        obj.active = False
         obj.save()
         return context
     

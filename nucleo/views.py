@@ -8,13 +8,14 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from nucleo.models import User
+from nucleo.models import Project, User
 from registration.forms import EmployeeForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
 from django.views.generic import DeleteView,UpdateView, DetailView
-
+from django.views.generic.list import ListView
+from django.views.generic.detail import DetailView
 
 def index(request):
     return render(request, "nucleo/index.html")
@@ -135,9 +136,7 @@ class UserUpdateView(UpdateView):
             else:
                 return HttpResponseRedirect('/employeeList/')
             
-# class ProjectListView(ListView):
-    
-      
+
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)
     u.active = True
@@ -150,3 +149,8 @@ def DeactiveUser(request,pk):
     u.save()
     return HttpResponseRedirect('/userList/')
 
+class ProjectListView(ListView):
+    model=Project
+    
+class ProjectDetailView(DetailView):
+    model=Project

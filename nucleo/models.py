@@ -38,8 +38,8 @@ class Category(models.Model):
         verbose_name="Categoria"
         verbose_name_plural="Categorias"
         
-    def _str_(self):
-        return self.name+" "+self.image
+    def __str__(self):
+        return 'Categoria: {}'.format(self.name)
      
 class Project(models.Model):
     id=models.AutoField(primary_key=True)
@@ -56,9 +56,8 @@ class Project(models.Model):
         verbose_name="Proyecto"
         verbose_name_plural="Proyectos"
     
-    def _str_(self):
-        return self.title+" "+self.description+" "+self.startDate+" "+self.endDate+" "+self.endReport
-    
+    def __str__(self):
+        return 'Proyecto: {}'.format(self.title)
 class Participate(models.Model):
     id=models.AutoField(primary_key=True)
     # idCliente=models.ForeignKey(User,verbose_name="id",on_delete=models.CASCADE)
@@ -68,3 +67,4 @@ class Participate(models.Model):
     class Meta:
         verbose_name="Participa"
         verbose_name_plural="Participan"
+ 

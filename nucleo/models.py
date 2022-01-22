@@ -38,6 +38,9 @@ class Category(models.Model):
     class Meta:
         verbose_name="Categoria"
         verbose_name_plural="Categorias"
+        
+    def __str__(self):
+        return format(self.name)
      
 class Project(models.Model):
     id=models.AutoField(primary_key=True)
@@ -47,23 +50,25 @@ class Project(models.Model):
     startDate=models.DateField(verbose_name="Fecha de comienzo")
     endDate=models.DateField(verbose_name="Fecha final")
     endReport=models.TextField(max_length=260,verbose_name="Informe final")
-    idEmployee=models.ForeignKey(User,verbose_name="id",on_delete=models.CASCADE)
-    idCategory=models.ForeignKey(Category,verbose_name="id",on_delete=models.CASCADE)
+    idEmployee=models.ForeignKey(User,verbose_name="Empleado",on_delete=models.CASCADE)
+    idCategory=models.ForeignKey(Category,verbose_name="Categoria",on_delete=models.CASCADE)
     
     class Meta:
         verbose_name="Proyecto"
         verbose_name_plural="Proyectos"
     
-    def _str_(self):
-        return self.title+" "+self.description+" "+self.startDate+" "+self.endDate+" "+self.endReport
+    def __str__(self):
+        return format(self.title)
     
 class Participate(models.Model):
     id=models.AutoField(primary_key=True)
-    # idCliente=models.ForeignKey(User,verbose_name="id",on_delete=models.CASCADE)
-    idProject=models.ForeignKey(Project,verbose_name="id",on_delete=models.CASCADE)
+    idCliente=models.ForeignKey(User,verbose_name="Cliente",on_delete=models.CASCADE,  null=True)
+    idProject=models.ForeignKey(Project,verbose_name="Proyecto",on_delete=models.CASCADE)
     registrationDate=models.DateField(verbose_name="Fecha de registro")
     rol=models.TextField(max_length=260,verbose_name="Rol")
     class Meta:
         verbose_name="Participa"
         verbose_name_plural="Participan"
+    def __str__(self):
+            return 'Participa: {}'.format(self.idCliente)
 

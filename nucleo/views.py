@@ -197,3 +197,8 @@ def DeactiveUser(request,pk):
     u.save()
     return HttpResponseRedirect('/userList/')
 
+class ProjectListView(ListView):
+    model=Project
+    
+class ProjectDetailView(DetailView):
+    model=Project

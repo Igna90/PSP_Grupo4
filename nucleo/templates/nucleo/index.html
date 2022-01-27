@@ -54,7 +54,11 @@
         {% endif %}
 
         {% if request.user.is_authenticated %}
+<<<<<<< HEAD
         <h1 class="text-light"> Bienvenid@ {{request.user.username}}</h1>
+=======
+        <h1 class="text-light"> Bienvenid@ {{user.username}}</h1>
+>>>>>>> 3e59839d059e62f475eecf5bc57b0c5be45f6445
         {% endif %}
       </div>
 
@@ -75,7 +79,7 @@
           {% if request.user.role_user == "Cliente" %}
           <li class="dropdown"><a href="#"><span> Proyectos </span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li><a href="#">Ver proyectos</a></li>
+              <li><a href="{% url 'listProjects' %}">Ver proyectos</a></li>
             </ul>
           </li>
           {% endif %}

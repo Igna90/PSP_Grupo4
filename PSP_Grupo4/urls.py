@@ -44,6 +44,11 @@ urlpatterns = [
     path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
     path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
     path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
+    path('createEmployee/', views.FormularioEmployeeView.index, name='createEmployee'),
+    # path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
+    # path('listProjects/', views.ProjectListView.as_view(), name='listProjects'),
+    # path('<int:pk>', views.ProjectDetailView.as_view(), name='detailProjects'),
+    
 ]
 
 

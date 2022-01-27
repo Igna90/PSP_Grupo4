@@ -1,0 +1,14 @@
+{% extends 'nucleo/index.html' %}
+
+    {% block content %}
+    <section id="hero">
+        <div class="container">
+            <h2 class="ss">{{object.title}}</h2>
+                  <p>Nivel dificultad: {{ object.level }}</p>
+                  <p>Fecha inicio: {{ object.startDate }}</p>
+                  <p>Fecha finalización: {{ object.endDate }}</p>
+                  <p >Categoria: {{ object.idCategory }}</p>
+                  <p >Descripcion: {{ object.description }}</p>
+        </div>
+    </section>   
+    {% endblock %}     

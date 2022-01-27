@@ -1,5 +1,5 @@
 from django import forms
-from nucleo.models import User
+from nucleo.models import Project, User
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -59,4 +59,29 @@ class EmployeeForm(UserCreationForm):
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
                    'bioraphy': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your biography'}),
                    'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
+        }
+        
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title','description', 'level', 'startDate','endDate','endReport','idCategory','idEmployee']
+        labels = {
+            'title': 'Titulo',
+            'description': 'Descripción',
+            'level': 'Nivel',
+            'startDate': 'Fecha de inicio',
+            'endDate': 'Fecha de fin',
+            'endReport': 'Informe final',
+            'idCategory' : 'Categoria',
+            'idEmployee' : 'Empleado',
+        }
+        widgets = { 
+                   'title': forms.TextInput (attrs={'class':'formset-field','placeholder': ' '}),
+                   'description': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'level': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'startDate': forms.DateInput (attrs={'type':'date'}),
+                   'endDate': forms.DateInput (attrs={'type':'date'}),
+                   'endReport': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'idCategory' : forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'idEmployee': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
         }

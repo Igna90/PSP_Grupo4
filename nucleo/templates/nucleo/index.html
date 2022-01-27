@@ -77,6 +77,7 @@
               {% if user.role_user == "Administrador" %}
               <li><a href="{% url 'userList' %}">Clientes</a></li>
               <li><a href="{% url 'employeeList' %}">Empleados</a></li>
+              <li><a href="{% url 'categoryList' %}">Categorias</a></li>
               {% endif %}
               <li><a href="{% url 'profile' %}">Editar Perfil</a></li>
             </ul>

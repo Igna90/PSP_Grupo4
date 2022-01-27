@@ -30,6 +30,13 @@ h1, h2, h3, h4, h5, h6 {
 #main {
   margin-top: 90px;
 }
+.cat-size{
+  height: 100px;
+  width: 100px;
+  max-height: 100px;
+  max-width: 100px;
+  border-radius:50%
+}
 
 /*--------------------------------------------------------------
 # Back to top button

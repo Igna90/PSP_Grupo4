@@ -1,5 +1,6 @@
 from django import forms
-from nucleo.models import User
+from django.db import models
+from nucleo.models import Category, User
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -23,8 +24,13 @@ class UserForm(UserCreationForm):
                    'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
                    'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
         }
+        
 
+    
 class UserUpdateForm(UserCreationForm):
+    
+    password1=forms.CharField(required=False,widget=forms.PasswordInput(attrs={'class': 'form-control mb2', 'placeholder': 'Contraseña'}), label="Contraseña")
+    password2=forms.CharField(required=False,widget=forms.PasswordInput(attrs={'class': 'form-control mb2', 'placeholder': 'Repite contraseña'}), label="Repite Contraseña")
     class Meta:
         model = User
         fields = ['username','dni', 'name', 'surname','address','birthDate']
@@ -35,10 +41,10 @@ class UserUpdateForm(UserCreationForm):
                    'name': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your name'}),
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
-                   'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
-                   'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
-                   
+                   'birthDate': forms.DateInput (attrs={'type':'date', 'placeholder': 'Write your birthdate'}),
         }
+        
+    
         
 class EmployeeForm(UserCreationForm):
     class Meta:
@@ -60,3 +66,21 @@ class EmployeeForm(UserCreationForm):
                    'bioraphy': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your biography'}),
                    'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
         }
+        
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name','image']
+        labels = {
+            'name': 'Nombre',
+            'image': 'Imagen',
+        }
+class EditCategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name','image']
+        labels = {
+            'name': 'Nombre',
+            'image': 'Imagen',
+        }
+       

@@ -64,7 +64,7 @@ class UserAdmin(admin.ModelAdmin):
     list_filter=['role_user']
     ordering=['name']
     list_per_page=5 
-    list_display = ('name', 'surname', 'address', 'active', 'role_user',)
+    list_display = ('username','name', 'surname', 'address', 'role_user',)
     search_fields= ('name','surname')
     
     

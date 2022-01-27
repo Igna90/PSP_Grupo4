@@ -20,6 +20,8 @@ from django.urls import path
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 from django.contrib.auth.decorators import login_required
 from nucleo import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
@@ -39,10 +41,17 @@ urlpatterns = [
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
     path('createEmployee/', views.FormularioEmployeeView.index, name='createEmployee'),
     path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
-    path('listProjects/', views.ProjectListView.as_view(), name='listProjects'),
-    path('<int:pk>', views.ProjectDetailView.as_view(), name='detailProjects'),
-    
+    path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
+    path('<int:pk>', login_required(views.ProjectDetailView.as_view()), name='detailProjects'),
+    path('categoryList/', views.CategoryListView.as_view(), name='categoryList'),
+    path('createCategoria/', views.FormCreateCategoryView.index, name='createCategoria'),
+    path('guardarCategoria/', views.FormCreateCategoryView.procesar_formulario, name='guardarCategoria'),
+    path('updateCategory/<int:pk>', login_required(views.editCategory.as_view()) , name='updateCategory'),
+    path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 urlpatterns += staticfiles_urlpatterns()

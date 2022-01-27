@@ -1,5 +1,6 @@
 from msilib.schema import ListView
 from multiprocessing.connection import Client
+import os
 from re import template
 from tkinter.tix import Select
 from django.shortcuts import redirect, render
@@ -8,8 +9,8 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from nucleo.models import Project, User
-from registration.forms import EmployeeForm, UserForm, UserUpdateForm
+from nucleo.models import Category, Participate, Project, User
+from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpdateForm,CategoryForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
@@ -45,6 +46,21 @@ class FormularioEmployeeView(HttpRequest):
             messages.success(request, "El usuario ha sido registrado correctamente")
             return redirect(('index'))
         return render(request, "registration/create_emp.html", {"form":userForm})
+
+    
+class FormCreateCategoryView(HttpRequest):
+    def index(request):
+        catForm = CategoryForm()
+        return render(request, "registration/create_cat.html", {"form":catForm})
+    def procesar_formulario(request):
+        catForm = CategoryForm(request.POST, request.FILES)
+        if request.method =='POST' and  catForm.is_valid():
+            
+            
+            catForm.save()
+            messages.success(request, "La categoria ha sido registrada correctamente")
+            return redirect(('categoryList'))
+        return render(request, "registration/create_cat.html", {"form":catForm})
             
 class login_view(HttpRequest):
     def loginUser(request):
@@ -122,8 +138,6 @@ class UserUpdateView(UpdateView):
         model= User
         form_class = UserForm
         template_name='nucleo/update.html'
-        # succes_url = reverse_lazy('nucleo:user_list')
-        # url_redirect = succes_url
         
         def dispatch(self, request, *args, **kwargs):
             self.object = self.get_object()
@@ -149,8 +163,45 @@ def DeactiveUser(request,pk):
     u.save()
     return HttpResponseRedirect('/userList/')
 
+class SignProject(HttpRequest):
+     def register(request,pk):
+           a = User.objects.get(id=pk)
+           b = Participate.objects.create()
+
+
 class ProjectListView(ListView):
-    model=Project
-    
+    model=Project     
 class ProjectDetailView(DetailView):
     model=Project
+
+class CategoryListView(ListView):
+    model=Category
+    
+class editCategory(UpdateView):
+    model= Category
+    form_edit = EditCategoryForm
+    template_name='nucleo/category_form.html'
+    fields = ['name','image']
+    def get_success_url(self):
+        return '/categoryList/'
+    
+    
+    
+class CategoryDeleteView(DeleteView):
+    model= Category
+    template_name='nucleo/delete_category.html'
+    succes_url = reverse_lazy('nucleo:categoryList')
+    url_redirect = succes_url
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        data={}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return HttpResponseRedirect('/categoryList/')
+    

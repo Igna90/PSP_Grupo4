@@ -33,7 +33,7 @@ class User(AbstractUser):
 class Category(models.Model):
     id=models.AutoField(primary_key=True)
     name=models.CharField(max_length=50,verbose_name="Categoria")
-    image=models.ImageField(verbose_name="Imagen")
+    image=models.ImageField(verbose_name="Imagen", upload_to = "assets/img/")
     
     class Meta:
         verbose_name="Categoria"

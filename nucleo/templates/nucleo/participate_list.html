@@ -3,11 +3,8 @@
     {% block content %}
     <section id="hero">
         <div class="container">
-            <h2 class="ss">Clientes</h2>
-            {% for participate in participates %}
-            {% if request.user.id == participate.idCliente.id %}
-              {% for project in projects %}
-              {% if project.id == participate.idProject.id %}
+          <h2 class="ss">Proyectos en los que has participado</h2>
+          <p class="s">* Solo se muestran aquellos proyectos que ya han finalizado</p>
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
@@ -18,11 +15,15 @@
                   <th>Fecha de Inicio</th>
                   <th>Fecha de Fin</th>
                   <th>Informe</th>
-                  <th></th>
                 </tr>
               </thead>
               <tbody>
+                {% for participate in participates %}
+                {% if request.user.id == participate.idCliente.id %}
+                {% for project in projects %}
+                  {% if project.id == participate.idProject.id %}
                     <tr class="a">
+
                       <td>{{ project.id }}</td>
                       <td>{{ project.title }}</td>
                       <td>{{ project.description }}</td>
@@ -31,12 +32,12 @@
                       <td>{{ project.endDate }}</td>
                       <td>{{ project.endReport }}</td>
                     </tr>
+                    {% endif %}
+                    {% endfor %}
+                  {% endif %}
+                  {% endfor %}
                   </tbody>
                 </table>
-                {% endif %}
-                {% endfor %}
-              {% endif %}
-              {% endfor %}
         </div>
     </section>   
     {% endblock %}   

@@ -162,10 +162,6 @@ class UserUpdateView(UpdateView):
                 return '/userList/'
             else:
                 return '/employeeList/'
-            
-class ProjectListtView(ListView):
-    model = Project
-    template_name = 'nucleo/projects_list.html'
     
 class ProjectDeleteView(DeleteView):
     model= Project
@@ -206,9 +202,8 @@ class ParticipateView(ListView):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
         context['participates'] = Participate.objects.all()
-        context['projects'] = Project.objects.filter(endDate__gt=now)
+        context['projects'] = Project.objects.filter(endDate__lt=now)
         return context
-    
     
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)

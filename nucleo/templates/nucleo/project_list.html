@@ -28,6 +28,19 @@
                 {% endfor %}
               </tbody>
             </table>
+            <div class="row">
+              <div class="col-5">
+                {% if request.user.role_user == 'Empleado' %}
+                <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>
+              </div>
+              <div class="col-7 frm">
+                <a href="{% url 'listParticipate' %}">VER PROYECTOS EN LOS QUE HAS PARTICIPADO</a>
+              </div>
+              {% endif %}
+              <div class="col-12">
+                <a href="{% url 'listParticipate' %}">* VER PROYECTOS EN LOS QUE HAS PARTICIPADO</a>
+              </div>
+            </div>
         </div>
     </section>   
     {% endblock %}     

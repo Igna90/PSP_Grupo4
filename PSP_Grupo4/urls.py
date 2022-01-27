@@ -48,7 +48,7 @@ urlpatterns = [
     path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
     path('createEmployee/', views.FormularioEmployeeView.index, name='createEmployee'),
     path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
-    path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
+    path('listtProjects/', login_required(views.ProjectListtView.as_view()), name='listtProjects'),
     path('<int:pk>', login_required(views.ProjectDetailView.as_view()), name='detailProjects'),
     path('categoryList/', views.CategoryListView.as_view(), name='categoryList'),
     path('createCategoria/', views.FormCreateCategoryView.index, name='createCategoria'),
@@ -56,7 +56,7 @@ urlpatterns = [
     path('updateCategory/<int:pk>', login_required(views.editCategory.as_view()) , name='updateCategory'),
     path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
     # path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
-    # path('listProjects/', views.ProjectListView.as_view(), name='listProjects'),
+    path('listParticipate/', views.ParticipateView.as_view(), name='listParticipate'),
     # path('<int:pk>', views.ProjectDetailView.as_view(), name='detailProjects'),
     
 ]

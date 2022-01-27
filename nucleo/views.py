@@ -1,4 +1,5 @@
 from audioop import reverse
+import datetime
 from msilib.schema import ListView
 from multiprocessing.connection import Client
 import os
@@ -162,7 +163,7 @@ class UserUpdateView(UpdateView):
             else:
                 return '/employeeList/'
             
-class ProjectListView(ListView):
+class ProjectListtView(ListView):
     model = Project
     template_name = 'nucleo/projects_list.html'
     
@@ -198,8 +199,15 @@ class ProjectUpdateView(UpdateView):
 
 class ParticipateView(ListView):
     model = Participate
+    second_model = Project
     template_name="nucleo/participate_list.html"
     
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['participates'] = Participate.objects.all()
+        context['projects'] = Project.objects.filter(endDate__gt=now)
+        return context
     
     
 def ActiveUser(request,pk):

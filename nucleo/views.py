@@ -1,3 +1,4 @@
+from audioop import reverse
 from msilib.schema import ListView
 from multiprocessing.connection import Client
 import os
@@ -11,12 +12,12 @@ from django.contrib.auth.decorators import login_required
 from django.views import View
 from nucleo.models import Category, Participate, Project, User
 from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpdateForm,CategoryForm
+from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
-from django.views.generic import DeleteView,UpdateView, DetailView
-from django.views.generic.list import ListView
-from django.views.generic.detail import DetailView
+from django.views.generic import DeleteView,UpdateView, DetailView, ListView
+
 
 def index(request):
     return render(request, "nucleo/index.html")
@@ -61,6 +62,18 @@ class FormCreateCategoryView(HttpRequest):
             messages.success(request, "La categoria ha sido registrada correctamente")
             return redirect(('categoryList'))
         return render(request, "registration/create_cat.html", {"form":catForm})
+    
+class FormularioProjectView(HttpRequest):
+    def index(request):
+        projectForm = ProjectForm()
+        return render(request, "nucleo/create_proj.html", {"form":ProjectForm})
+    def procesar_formulario(request):
+        projectForm = ProjectForm(request.POST)
+        if request.method =='POST' and  projectForm.is_valid():
+            projectForm.save()
+            messages.success(request, "El proyecto se ha creado correctamente")
+            return redirect(('listProjects'))
+        return render(request, "nucleo/create_proj.html", {"form":ProjectForm})
             
 class login_view(HttpRequest):
     def loginUser(request):
@@ -141,16 +154,54 @@ class UserUpdateView(UpdateView):
         
         def dispatch(self, request, *args, **kwargs):
             self.object = self.get_object()
-            self.object
             return super().dispatch(request, *args, **kwargs)
         
         def get_success_url(self):
             if(self.object.role_user=="Cliente"):
-                return HttpResponseRedirect('/userList/')
+                return '/userList/'
             else:
-                return HttpResponseRedirect('/employeeList/')
+                return '/employeeList/'
             
+class ProjectListView(ListView):
+    model = Project
+    template_name = 'nucleo/projects_list.html'
+    
+class ProjectDeleteView(DeleteView):
+    model= Project
+    template_name='nucleo/deleteproject.html'
+    succes_url = reverse_lazy('nucleo:projects_list')
+    url_redirect = succes_url
+    
+    def dispatch(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        return super().dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        data={}
+        try:
+            self.object.delete()
+        except Exception as e:
+            data['error'] = str(e)
+        return HttpResponseRedirect('/listProjects/')
+    
+class ProjectUpdateView(UpdateView):
+        model= Project
+        form_class = ProjectForm
+        template_name='nucleo/updateproject.html'
+        
+        def dispatch(self, request, *args, **kwargs):
+            self.object = self.get_object()
+            return super().dispatch(request, *args, **kwargs)
+    
+        def get_success_url(self):
+            return '/listProjects/'
 
+class ParticipateView(ListView):
+    model = Participate
+    template_name="nucleo/participate_list.html"
+    
+    
+    
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)
     u.active = True

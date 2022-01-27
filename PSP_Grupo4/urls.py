@@ -39,6 +39,13 @@ urlpatterns = [
     path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
     path('activeUser/<int:pk>', login_required(views.ActiveUser) , name='activeUser'),
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
+    path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
+    path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
+    path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
+    path('deleteProjects/<int:pk>', login_required(views.ProjectDeleteView.as_view()), name='deleteProjects'),
+    path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
+    path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
+    path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
     path('createEmployee/', views.FormularioEmployeeView.index, name='createEmployee'),
     path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
     path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
@@ -48,6 +55,10 @@ urlpatterns = [
     path('guardarCategoria/', views.FormCreateCategoryView.procesar_formulario, name='guardarCategoria'),
     path('updateCategory/<int:pk>', login_required(views.editCategory.as_view()) , name='updateCategory'),
     path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
+    # path('guardarEmployee/', views.FormularioEmployeeView.procesar_formulario, name='guardarEmployee'),
+    # path('listProjects/', views.ProjectListView.as_view(), name='listProjects'),
+    # path('<int:pk>', views.ProjectDetailView.as_view(), name='detailProjects'),
+    
 ]
 
 if settings.DEBUG:

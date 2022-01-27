@@ -62,8 +62,8 @@ class Project(models.Model):
     
 class Participate(models.Model):
     id=models.AutoField(primary_key=True)
-    idCliente=models.ForeignKey(User,verbose_name="Cliente",on_delete=models.CASCADE,  null=True)
-    idProject=models.ForeignKey(Project,verbose_name="Proyecto",on_delete=models.CASCADE)
+    idCliente=models.ForeignKey(User,verbose_name="id",on_delete=models.CASCADE)
+    idProject=models.ForeignKey(Project,verbose_name="id",on_delete=models.CASCADE)
     registrationDate=models.DateField(verbose_name="Fecha de registro")
     rol=models.TextField(max_length=260,verbose_name="Rol")
     class Meta:

@@ -1,6 +1,7 @@
 from django import forms
 from django.db import models
 from nucleo.models import Category, User
+from nucleo.models import Project, User
 from django.contrib.auth.forms import UserCreationForm
 
 
@@ -84,3 +85,27 @@ class EditCategoryForm(forms.ModelForm):
             'image': 'Imagen',
         }
        
+class ProjectForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['title','description', 'level', 'startDate','endDate','endReport','idCategory','idEmployee']
+        labels = {
+            'title': 'Titulo',
+            'description': 'Descripción',
+            'level': 'Nivel',
+            'startDate': 'Fecha de inicio',
+            'endDate': 'Fecha de fin',
+            'endReport': 'Informe final',
+            'idCategory' : 'Categoria',
+            'idEmployee' : 'Empleado',
+        }
+        widgets = { 
+                   'title': forms.TextInput (attrs={'class':'formset-field','placeholder': ' '}),
+                   'description': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'level': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'startDate': forms.DateInput (attrs={'type':'date'}),
+                   'endDate': forms.DateInput (attrs={'type':'date'}),
+                   'endReport': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'idCategory' : forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'idEmployee': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+        }

@@ -8,8 +8,11 @@
               <thead>
                 <tr>
                   <th>Titulo</th>
+                  <th>Descripcion</th>
                   <th>Nivel</th>
                   <th>Fecha comienzo</th>
+                  <th>Fecha fin</th>
+                  <th>Informe final</th>
                   <th>Categoria</th>
                   <th></th>
                 </tr>
@@ -18,8 +21,11 @@
                 {% for item in project_list %}
                 <tr class="a">
                   <td>{{ item.title }}</td>
+                  <td>{{ item.description }}</td>
                   <td>{{ item.level }}</td>
                   <td>{{ item.startDate }}</td>
+                  <td>{{ item.endDate }}</td>
+                  <td>{{ item.endReport }}</td>
                   <td >{{ item.idCategory }}</td>
                   <td>
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'detailProjects' item.id %}">Ver</a></button>

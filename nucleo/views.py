@@ -1,9 +1,10 @@
 from audioop import reverse
+import datetime
 from msilib.schema import ListView
 from multiprocessing.connection import Client
 import os
 from re import template
-from tkinter.tix import Select
+from tkinter.tix import MAX, Select
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
@@ -161,10 +162,6 @@ class UserUpdateView(UpdateView):
                 return '/userList/'
             else:
                 return '/employeeList/'
-            
-class ProjectListView(ListView):
-    model = Project
-    template_name = 'nucleo/projects_list.html'
     
 class ProjectDeleteView(DeleteView):
     model= Project
@@ -198,9 +195,15 @@ class ProjectUpdateView(UpdateView):
 
 class ParticipateView(ListView):
     model = Participate
+    second_model = Project
     template_name="nucleo/participate_list.html"
     
-    
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['participates'] = Participate.objects.all().order_by("idProject")
+        context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
+        return context
     
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)

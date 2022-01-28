@@ -1,9 +1,9 @@
 {% extends 'nucleo/index.html' %}
-
     {% block content %}
     <section id="hero">
         <div class="container">
-            <h2 class="ss">Clientes</h2>
+          <h2 class="ss">Proyectos en los que has participado</h2>
+          <p class="s">* Solo se muestran aquellos proyectos que ya han finalizado</p>
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
@@ -11,45 +11,29 @@
                   <th>Titulo</th>
                   <th>Descripcion</th>
                   <th>Nivel</th>
-                  <th>Fecha de inicio</th>
+                  <th>Fecha de Inicio</th>
                   <th>Fecha de Fin</th>
-                  <th>Informe final</th>
-                  <th></th>
-                  <th></th>
-                  <th></th>
+                  <th>Informe</th>
                 </tr>
               </thead>
               <tbody>
-                {% for item in items %}
-                <tr class="a">
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.dni }}</td>
-                  <td>{{ item.name }}</td>
-                  <td >{{ item.surname }}</td>
-                  <td>{{ item.address }}</td>
-                  <td>{{ item.birthDate }}</td>
-                  <td>{{ item.registerDate }}</td>
-                  {%if item.active == False %}
-                  <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'activeUser' item.id %}">Activar</a></button>
-                  </td>
-                  {% endif %}
-                  {%if item.active == True %}
-                  <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deactiveUser' item.id %}">Desactivar</a></button>
-                  </td>
-                  {% endif %}
-                  <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteUser' item.id %}">Eliminar</a></button>
-                  </td>
-                  <td>
-                    <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateUser' item.id %}">Editar</a></button>
-                  </td>
-                </tr>
-                {% endfor %}
-              </tbody>
-            </table>
-            <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createClient' %}">Crear Cliente</a></button>
+                {% for participate in participates %}
+                {% for project in projects %}
+                {% if request.user.id == participate.idCliente.id and project.id == participate.idProject.id %}
+                    <tr class="a">
+                      <td>{{ project.id }}</td>
+                      <td>{{ project.title }}</td>
+                      <td>{{ project.description }}</td>
+                      <td>{{ project.level }}</td>
+                      <td>{{ project.startDate }}</td>
+                      <td>{{ project.endDate }}</td>
+                      <td>{{ project.endReport }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                  {% endfor %}
+                  </tbody>
+                </table>
         </div>
     </section>   
     {% endblock %}   

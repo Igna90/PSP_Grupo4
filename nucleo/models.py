@@ -56,6 +56,7 @@ class Project(models.Model):
     class Meta:
         verbose_name="Proyecto"
         verbose_name_plural="Proyectos"
+        ordering=["startDate"]
     
     def __str__(self):
         return format(self.title)

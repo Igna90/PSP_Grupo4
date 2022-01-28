@@ -4,7 +4,7 @@ from msilib.schema import ListView
 from multiprocessing.connection import Client
 import os
 from re import template
-from tkinter.tix import Select
+from tkinter.tix import MAX, Select
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
@@ -201,8 +201,8 @@ class ParticipateView(ListView):
     def get_context_data(self, **kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
-        context['participates'] = Participate.objects.all()
-        context['projects'] = Project.objects.filter(endDate__lt=now)
+        context['participates'] = Participate.objects.all().order_by("idProject")
+        context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
         return context
     
 def ActiveUser(request,pk):

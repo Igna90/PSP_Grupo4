@@ -1,5 +1,4 @@
 {% extends 'nucleo/index.html' %}
-
     {% block content %}
     <section id="hero">
         <div class="container">
@@ -19,11 +18,9 @@
               </thead>
               <tbody>
                 {% for participate in participates %}
-                {% if request.user.id == participate.idCliente.id %}
                 {% for project in projects %}
-                  {% if project.id == participate.idProject.id %}
+                {% if request.user.id == participate.idCliente.id and project.id == participate.idProject.id %}
                     <tr class="a">
-
                       <td>{{ project.id }}</td>
                       <td>{{ project.title }}</td>
                       <td>{{ project.description }}</td>
@@ -34,7 +31,6 @@
                     </tr>
                     {% endif %}
                     {% endfor %}
-                  {% endif %}
                   {% endfor %}
                   </tbody>
                 </table>

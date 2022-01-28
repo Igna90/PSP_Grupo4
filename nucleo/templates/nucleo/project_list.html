@@ -1,7 +1,7 @@
 {% extends 'nucleo/index.html' %}
 
     {% block content %}
-    <section id="hero">
+    <section id="auto">
         <div class="container">
             <h2 class="ss">Proyectos</h2>
             <table id="tt" class="table table-hover">
@@ -28,6 +28,10 @@
                   <td>{{ item.endReport }}</td>
                   <td >{{ item.idCategory }}</td>
                   <td>
+                    {% if request.user.id == item.idEmployee.id %}
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteProjects' item.id %}">Eliminar</a></button>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'updateProject' item.id %}">Editar</a></button>
+                    {% endif %}
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'detailProjects' item.id %}">Ver</a></button>
                   </td>
                 </tr>
@@ -40,11 +44,13 @@
                 <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>
               </div>
               <div class="col-7 frm">
-                <a href="{% url 'listParticipate' %}">VER PROYECTOS EN LOS QUE HAS PARTICIPADO</a>
+                <a href="{% url 'listParticipate' %}">* VER PROYECTOS EN LOS QUE HAS PARTICIPADO</a>
               </div>
               {% endif %}
+              {% if request.user.role_user == 'Cliente' %}
               <div class="col-12">
                 <a href="{% url 'listParticipate' %}">* VER PROYECTOS EN LOS QUE HAS PARTICIPADO</a>
+                {% endif %}
               </div>
             </div>
         </div>

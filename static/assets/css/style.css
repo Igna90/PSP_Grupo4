@@ -1368,3 +1368,20 @@ input::-moz-placeholder {
 .s{
   font-size:12px;
 }
+#auto{
+  height:auto;
+  width: 100%;
+  /* background: linear-gradient(rgba(55, 142, 181, 0.5), rgba(55, 142, 181, 0.2)), url("../img/hero-bg.jpg") top center; */
+  background-color: #3E4345;
+  background-size: cover;
+  position: relative;
+  margin-bottom: -90px;
+}
+#auto h2 {
+  color: #fff;
+  margin-bottom: 50px;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: -1px 0 2px #2f4d5a;
+}

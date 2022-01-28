@@ -1,0 +1,23 @@
+{% extends 'nucleo/index.html' %}
+    {% block content %}
+    <section id="hero">
+        <div class="hero-container" data-aos="fade-up">
+            <form action="{% url 'createdParticipate' project.id.id %}" method="post">
+                {% csrf_token %}
+                {%for project in projects %}
+                <p>¿Estás seguro de que deseas eliminar al usuario <strong>"{{project.title}}"</strong> ?</p>
+                <div class="row">
+                    <div class="col-6">
+                        <!-- <input type="hidden" name="idProject" value="{{project.id.idProject}}"/> -->
+                        <input class="bot" type="submit" value="Confirmar">
+                    </div>
+                    <div class="col-6">
+                        <button class="bot"><a href="{% url 'createdParticipate' %}">Cancelar</a></button>
+                    </div>
+                </div>
+                {% endfor %}
+            </form>
+
+        </div>
+    </section>
+    {% endblock %}

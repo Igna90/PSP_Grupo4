@@ -27,12 +27,19 @@
                   <td>{{ item.endDate }}</td>
                   <td>{{ item.endReport }}</td>
                   <td >{{ item.idCategory }}</td>
+                  <td >{{ item.id }}</td>
                   <td>
                     {% if request.user.id == item.idEmployee.id %}
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteProjects' item.id %}">Eliminar</a></button>
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'updateProject' item.id %}">Editar</a></button>
                     {% endif %}
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'detailProjects' item.id %}">Ver</a></button>
+                    {% if request.user.role_user == "Cliente" %}
+                      <form action="{% url 'createdParticipate' item.id %}" method="post">
+                        {% csrf_token %}
+                        <input type="hidden" name="idClient" value={{request.user.id}}/>
+                        <button type=submit class="btn btn-primary bot">Inscribirse</button>
+                      </form>
+                    {% endif %}
                   </td>
                 </tr>
                 {% endfor %}
@@ -40,7 +47,7 @@
             </table>
             <div class="row">
               <div class="col-5">
-                {% if request.user.role_user == 'Empleado' %}
+                {% if request.user.user_role == 'Empleado' %}
                 <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>
               </div>
               <div class="col-7 frm">
@@ -50,8 +57,8 @@
               {% if request.user.role_user == 'Cliente' %}
               <div class="col-12">
                 <a href="{% url 'listParticipate' %}">* VER PROYECTOS EN LOS QUE HAS PARTICIPADO</a>
-                {% endif %}
               </div>
+              {% endif %}
             </div>
         </div>
     </section>   

@@ -1,4 +1,5 @@
 from audioop import reverse
+from contextlib import nullcontext
 import datetime
 from msilib.schema import ListView
 from multiprocessing.connection import Client
@@ -17,7 +18,7 @@ from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateFo
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
-from django.views.generic import DeleteView,UpdateView, DetailView, ListView
+from django.views.generic import DeleteView,UpdateView, DetailView, ListView,TemplateView
 
 
 def index(request):
@@ -205,8 +206,23 @@ class ParticipateView(ListView):
         context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
         return context
     
+def VistaParticipe(request,pk):
+    project = Project.objects.filter(pk=pk)
+    return render(request,"nucleo/create_participate.html",{"projects":project})
+    
+def agregarParticipa(request,pk):
+    if request.method=="POST":
+        idProjecto = Project.objects.get(pk=pk)
+        cliente= request.POST.get('idClient').split("/")
+        c=cliente[0]
+        idCliente = User.objects.get(pk=c)
+        now = datetime.datetime.now()
+        participate = Participate.objects.create(idClient=idCliente, idProject = idProjecto, registrationDate = now,rol="null")
+        participate.save()
+        return redirect(("index"))
+    
 def ActiveUser(request,pk):
-    u = User.objects.get(id=pk)
+    u = User.objects.get(pk=pk)
     u.active = True
     u.save()
     return HttpResponseRedirect('/userList/')

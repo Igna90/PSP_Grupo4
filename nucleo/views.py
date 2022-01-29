@@ -206,9 +206,9 @@ class ParticipateView(ListView):
         context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
         return context
     
-def VistaParticipe(request,pk):
-    project = Project.objects.filter(pk=pk)
-    return render(request,"nucleo/create_participate.html",{"projects":project})
+# def VistaParticipe(request,pk):
+#     project = Project.objects.filter(pk=pk)
+#     return render(request,"nucleo/create_participate.html",{"projects":project})
     
 def agregarParticipa(request,pk):
     if request.method=="POST":
@@ -239,7 +239,16 @@ class SignProject(HttpRequest):
 
 
 class ProjectListView(ListView):
-    model=Project     
+    model=Project
+    template_name="nucleo/project_list.html"
+    # def get_context_data(self, **kwargs):
+    #     now = datetime.datetime.now()
+    #     context = super().get_context_data(**kwargs)
+    #     context['projectsDates'] = Project.objects.filter(startDate__gt=now)
+    #     return context
+    
+    
+        
 class ProjectDetailView(DetailView):
     model=Project
 

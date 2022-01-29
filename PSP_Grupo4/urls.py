@@ -54,11 +54,9 @@ urlpatterns = [
     path('guardarCategoria/', views.FormCreateCategoryView.procesar_formulario, name='guardarCategoria'),
     path('updateCategory/<int:pk>', login_required(views.editCategory.as_view()) , name='updateCategory'),
     path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
-    path('createParticipate/<int:pk>', views.VistaParticipe, name='createParticipate'),
     path('createdParticipate/<int:pk>', views.agregarParticipa, name='createdParticipate'),
     path('listParticipate/', views.ParticipateView.as_view(), name='listParticipate'),
-    # path('<int:pk>', views.ProjectDetailView.as_view(), name='detailProjects'),
-    
+   
 ]
 
 if settings.DEBUG:

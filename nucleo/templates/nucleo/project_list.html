@@ -18,7 +18,9 @@
                 </tr>
               </thead>
               <tbody>
+                
                 {% for item in project_list %}
+                
                 <tr class="a">
                   <td>{{ item.title }}</td>
                   <td>{{ item.description }}</td>
@@ -32,15 +34,17 @@
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteProjects' item.id %}">Eliminar</a></button>
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'updateProject' item.id %}">Editar</a></button>
                     {% endif %}
-                    {% if request.user.role_user == "Cliente" %}
+                    
+                    {% if request.user.role_user == "Cliente" '''and project.startDate''' %}
                       <form action="{% url 'createdParticipate' item.id %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="idClient" value={{request.user.id}}/>
-                        {% if datetime.now < item.registrationDate.id %}
+                        
                         <button type=submit class="btn btn-primary bot">Inscribirse</button>
-                        {% endif %}
+                        
                       </form>
-                    {% endif %}
+                      {% endif %}
+                    
                   </td>
                 </tr>
                 {% endfor %}

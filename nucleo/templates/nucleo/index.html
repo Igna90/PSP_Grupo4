@@ -45,16 +45,18 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
+        
+
+        {% if request.user.is_authenticated %}
+        <h1 class="text-light"> Bienvenid@ {{request.user.username}}</h1>
+        {% endif %}
+
         {% if messages %}
         {% for message in messages %}
         {% if message.tags == 'success' %}
         <strong><span>{{ message }}</span></strong>
         {% endif %}
         {% endfor %}
-        {% endif %}
-
-        {% if request.user.is_authenticated %}
-        <h1 class="text-light"> Bienvenid@ {{request.user.username}}</h1>
         {% endif %}
       </div>
 

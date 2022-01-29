@@ -212,14 +212,13 @@ def VistaParticipe(request,pk):
     
 def agregarParticipa(request,pk):
     if request.method=="POST":
-        idProjecto = Project.objects.get(pk=pk)
-        cliente= request.POST.get('idClient').split("/")
-        c=cliente[0]
-        idCliente = User.objects.get(pk=c)
+        idProjecto=Project.objects.get(pk=pk)
+        cliente=request.user.id
         now = datetime.datetime.now()
-        participate = Participate.objects.create(idClient=idCliente, idProject = idProjecto, registrationDate = now,rol="null")
+        participate = Participate.objects.create(idCliente_id=cliente, idProject = idProjecto, registrationDate = now,rol="null")
         participate.save()
-        return redirect(("index"))
+        messages.success(request,"Has sido inscrito satisfactoriamente")
+        return redirect(("listProjects"))
     
 def ActiveUser(request,pk):
     u = User.objects.get(pk=pk)

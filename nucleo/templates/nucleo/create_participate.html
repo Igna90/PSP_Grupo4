@@ -5,7 +5,7 @@
             <form action="{% url 'createdParticipate' project.id.id %}" method="post">
                 {% csrf_token %}
                 {%for project in projects %}
-                <p>¿Estás seguro de que deseas eliminar al usuario <strong>"{{project.title}}"</strong> ?</p>
+                <p>¿Estás seguro de querer ingresar a  <strong>"{{project.title}}"</strong> ?</p>
                 <div class="row">
                     <div class="col-6">
                         <!-- <input type="hidden" name="idProject" value="{{project.id.idProject}}"/> -->

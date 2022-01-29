@@ -27,7 +27,6 @@
                   <td>{{ item.endDate }}</td>
                   <td>{{ item.endReport }}</td>
                   <td >{{ item.idCategory }}</td>
-                  <td >{{ item.id }}</td>
                   <td>
                     {% if request.user.id == item.idEmployee.id %}
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteProjects' item.id %}">Eliminar</a></button>
@@ -37,7 +36,9 @@
                       <form action="{% url 'createdParticipate' item.id %}" method="post">
                         {% csrf_token %}
                         <input type="hidden" name="idClient" value={{request.user.id}}/>
+                        {% if datetime.now < item.registrationDate.id %}
                         <button type=submit class="btn btn-primary bot">Inscribirse</button>
+                        {% endif %}
                       </form>
                     {% endif %}
                   </td>

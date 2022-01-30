@@ -1385,3 +1385,6 @@ input::-moz-placeholder {
   font-weight: 700;
   text-shadow: -1px 0 2px #2f4d5a;
 }
+.bot a{
+  color:white;
+}

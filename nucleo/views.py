@@ -2,6 +2,7 @@ from audioop import reverse
 from contextlib import nullcontext
 import datetime
 from msilib.schema import ListView
+from multiprocessing import context
 from multiprocessing.connection import Client
 import os
 from re import template
@@ -208,10 +209,17 @@ class ParticipateView(ListView):
         context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
         return context
     
-# def VistaParticipe(request,pk):
-#     project = Project.objects.filter(pk=pk)
-#     return render(request,"nucleo/create_participate.html",{"projects":project})
-    
+def project_participate(request,pk):
+    projects = Project.objects.filter(pk=pk)
+    isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
+    if (isParticipates == False):
+        context = {
+            'projects' : projects,
+            }
+        return render(request,"nucleo/project_participate.html",context)
+    else:
+        return render(request,'nucleo/is_participate.html')
+
 def agregarParticipa(request,pk):
     if request.method=="POST":
         idProjecto=Project.objects.get(pk=pk)
@@ -222,13 +230,13 @@ def agregarParticipa(request,pk):
         messages.success(request,"Has sido inscrito satisfactoriamente")
         return redirect(("listProjects"))
     
-def ActiveUser(request,pk):
+def ActiveUser(pk):
     u = User.objects.get(pk=pk)
     u.active = True
     u.save()
     return HttpResponseRedirect('/userList/')
 
-def DeactiveUser(request,pk):
+def DeactiveUser(pk):
     u = User.objects.get(id=pk)
     u.active = False
     u.save()
@@ -240,36 +248,37 @@ class SignProject(HttpRequest):
            b = Participate.objects.create()
 
 
-# class ProjectListView(ListView):
-#     model=Project
-#     template_name="nucleo/project_list.html"
-        
-    # def get_context_data(self, **kwargs):
-    #     now = datetime.datetime.now()
-    #     context = super().get_context_data(**kwargs)
-    #     context['projectsDates'] = Project.objects.filter(startDate__gt=now)
-    #     return context
-    
+class ProjectListView(ListView):
+    model=Project
+    template_name="nucleo/project_list.html"
+
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['projectsDates'] = Project.objects.filter(startDate__gt=now)
+        context['participates']= Participate.objects.all()
+        return context
+
 def proyectos(request):
     queryset = request.GET.get("buscar")
-    items = Project.objects.all()
-    
     if queryset:
         cat = Category.objects.filter (
             Q(name = queryset)
         )
         items = Project.objects.filter(idCategory__in = cat)
-        
     return render(request,'nucleo/project_list.html',{'items':items})
+
+# def proyectos(request):
+#     queryset = request.GET.get("buscar")
+#     items = Project.objects.all()
     
-# def buscar(request):
-#         queryset = request.GET.get("buscar")
-#         categorias = Project.objects.all()
-#         if queryset:
-#             categorias = Project.objects.filter(
-#                 Q(idCategory__icontains = queryset)
-#             )
-#         return render(request, 'project_list.html', {'categorias':categorias})
+#     if queryset:
+#         cat = Category.objects.filter (
+#             Q(name = queryset)
+#         )
+#         items = Project.objects.filter(idCategory__in = cat)
+        
+#     return render(request,'nucleo/project_list.html',{'items':items})
         
 class ProjectDetailView(DetailView):
     model=Project
@@ -284,8 +293,6 @@ class editCategory(UpdateView):
     fields = ['name','image']
     def get_success_url(self):
         return '/categoryList/'
-    
-    
     
 class CategoryDeleteView(DeleteView):
     model= Category

@@ -6,6 +6,7 @@ from multiprocessing.connection import Client
 import os
 from re import template
 from tkinter.tix import MAX, Select
+from unicodedata import name
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
@@ -19,6 +20,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
 from django.views.generic import DeleteView,UpdateView, DetailView, ListView,TemplateView
+from django.db.models import Q
 
 
 def index(request):
@@ -238,16 +240,36 @@ class SignProject(HttpRequest):
            b = Participate.objects.create()
 
 
-class ProjectListView(ListView):
-    model=Project
-    template_name="nucleo/project_list.html"
+# class ProjectListView(ListView):
+#     model=Project
+#     template_name="nucleo/project_list.html"
+        
     # def get_context_data(self, **kwargs):
     #     now = datetime.datetime.now()
     #     context = super().get_context_data(**kwargs)
     #     context['projectsDates'] = Project.objects.filter(startDate__gt=now)
     #     return context
     
+def proyectos(request):
+    queryset = request.GET.get("buscar")
+    items = Project.objects.all()
     
+    if queryset:
+        cat = Category.objects.filter (
+            Q(name = queryset)
+        )
+        items = Project.objects.filter(idCategory__in = cat)
+        
+    return render(request,'nucleo/project_list.html',{'items':items})
+    
+# def buscar(request):
+#         queryset = request.GET.get("buscar")
+#         categorias = Project.objects.all()
+#         if queryset:
+#             categorias = Project.objects.filter(
+#                 Q(idCategory__icontains = queryset)
+#             )
+#         return render(request, 'project_list.html', {'categorias':categorias})
         
 class ProjectDetailView(DetailView):
     model=Project

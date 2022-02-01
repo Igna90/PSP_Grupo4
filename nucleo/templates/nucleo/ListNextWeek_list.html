@@ -2,8 +2,6 @@
     {% block content %}
     <section id="auto">
         <div class="container">
-          <h2 class="ss">Proyectos en los que has participado</h2>
-          <p class="s">* Solo se muestran aquellos proyectos que ya han finalizado</p>
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
@@ -17,20 +15,17 @@
                 </tr>
               </thead>
               <tbody>
-                {% for participate in participates %}
-                {% for project in projects %}
-                {% if request.user.id == participate.idCliente.id and project.id == participate.idProject.id %}
+                {% for item in project_list %}
                     <tr class="a">
-                      <td>{{ project.id }}</td>
-                      <td>{{ project.title }}</td>
-                      <td>{{ project.description }}</td>
-                      <td>{{ project.level }}</td>
-                      <td>{{ project.startDate }}</td>
-                      <td>{{ project.endDate }}</td>
-                      <td>{{ project.endReport }}</td>
+                      <td>{{ item.id }}</td>
+                      <td>{{ item.title }}</td>
+                      <td>{{ item.description }}</td>
+                      <td>{{ item.level }}</td>
+                      <td>{{ item.startDate }}</td>
+                      <td>{{ item.endDate }}</td>
+                      <td>{{ item.endReport }}</td>
                     </tr>
-                    {% endif %}
-                    {% endfor %}
+
                   {% endfor %}
                   </tbody>
                 </table>

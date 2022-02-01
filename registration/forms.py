@@ -88,7 +88,7 @@ class EditCategoryForm(forms.ModelForm):
 class ProjectForm(forms.ModelForm):
     class Meta:
         model = Project
-        fields = ['title','description', 'level', 'startDate','endDate','endReport','idCategory','idEmployee']
+        fields = ['title','description', 'level', 'startDate','endDate','endReport','idCategory']
         labels = {
             'title': 'Titulo',
             'description': 'Descripción',
@@ -97,8 +97,9 @@ class ProjectForm(forms.ModelForm):
             'endDate': 'Fecha de fin',
             'endReport': 'Informe final',
             'idCategory' : 'Categoria',
-            'idEmployee' : 'Empleado',
+            
         }
+        exclude = ('idEmployee',)
         widgets = { 
                    'title': forms.TextInput (attrs={'class':'formset-field','placeholder': ' '}),
                    'description': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
@@ -106,6 +107,6 @@ class ProjectForm(forms.ModelForm):
                    'startDate': forms.DateInput (attrs={'type':'date'}),
                    'endDate': forms.DateInput (attrs={'type':'date'}),
                    'endReport': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
-                   'idCategory' : forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
+                   'idCategory' : forms.Select (attrs={'class':'formset-field', 'placeholder': ' '}),
                    'idEmployee': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
         }

@@ -46,7 +46,7 @@ class ProjectInLine(admin.StackedInline):
     
 
 class CategoryAdmin(admin.ModelAdmin):
-    list_filter=['name']
+    list_filter=['id','name']
     ordering=['name']
     list_per_page=5 
     inlines=[ProjectInLine,]
@@ -56,7 +56,7 @@ class ProjectAdmin(admin.ModelAdmin):
     list_filter=['title']
     ordering=['title']
     list_per_page=5 
-    list_display = ('title', 'level', 'startDate', 'endDate', 'idCategory',)
+    list_display = ('id','title', 'level', 'startDate', 'endDate', 'idCategory',)
     search_fields= ('title','idCategory')    
 
 class UserAdmin(admin.ModelAdmin):

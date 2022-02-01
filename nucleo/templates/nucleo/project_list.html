@@ -5,25 +5,17 @@
         <div class="container">
             <h2 class="ss">Proyectos</h2>
 
-          <div class="container">
-            <div class="row">
-              <div class="col-md-8 search">
-                <form method="GET">
-                  <div id="custom-search-input">
-                    <div class="input-group col.md.8">
-                      <input type="text" class="form.control" placeholder="Buscar..." name="buscar" value="{{ request.GET.buscar }}">
-                      <span class="input-group-list">
-                        <i class="icon icon.search"></i>
-                        <button type="submit" class="boton btn-success">Buscar por categoria</button>
-                      </span>
-                    </div>
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-          <br>
 
+          <form method="GET">
+          <select name="buscar" value="{{ request.get.buscar }}">
+            <option selected disabled="true" name="buscar">Selecciona Categoria --</option>
+            {% for category in categorys %}
+            <option value="{{ category.id }}"> {{category.name }}</option>
+            {% endfor %}
+          </select>
+          <button type="submit" class="boton btn-success">Buscar</button>
+
+        </form>
 
             <table id="tt" class="table table-hover">
               <thead>
@@ -40,7 +32,7 @@
               </thead>
               <tbody>
                 
-                {% for item in items %}
+                {% for item in project_list %}
                 
                 <tr class="a">
                   <td>{{ item.title }}</td>
@@ -73,7 +65,7 @@
             </table>
             <div class="row">
               <div class="col-5">
-                {% if request.user.user_role == 'Empleado' %}
+                {% if request.user.role_user == 'Empleado' %}
                 <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>
               </div>
               <div class="col-7 frm">

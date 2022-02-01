@@ -41,7 +41,7 @@ urlpatterns = [
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
     path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
     path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
-    path('listProjects/', login_required(views.proyectos), name='listProjects'),
+    path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
     path('deleteProjects/<int:pk>', login_required(views.ProjectDeleteView.as_view()), name='deleteProjects'),
     path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
     path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
@@ -56,6 +56,7 @@ urlpatterns = [
     path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
     path('createdParticipate/<int:pk>', views.agregarParticipa, name='createdParticipate'),
     path('listParticipate/', views.ParticipateView.as_view(), name='listParticipate'),
+    # path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
    
 ]
 

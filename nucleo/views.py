@@ -7,6 +7,7 @@ from multiprocessing import context
 from multiprocessing.connection import Client
 import os
 from re import template
+import this
 from tkinter.tix import MAX, Select
 from unicodedata import name
 from django.shortcuts import redirect, render
@@ -75,8 +76,11 @@ class FormularioProjectView(HttpRequest):
         return render(request, "nucleo/create_proj.html", {"form":projectForm})
     def procesar_formulario(request):
         projectForm = ProjectForm(request.POST)
+        project = projectForm.save(commit=False)
+        project.idEmployee = request.user
+        
         if request.method =='POST' and  projectForm.is_valid():
-            projectForm.save()
+            project.save()
             messages.success(request, "El proyecto se ha creado correctamente")
             return redirect(('listProjects'))
         return render(request, "nucleo/create_proj.html", {"form":projectForm})
@@ -251,7 +255,17 @@ class SignProject(HttpRequest):
 
 class ProjectListView(ListView):
     model=Project
+    second_model=Category
     template_name="nucleo/project_list.html"
+    
+    def get_queryset(self):
+        query = self.request.GET.get('buscar')
+        if query:
+            object_list = self.model.objects.filter(idCategory=query)
+        else:
+             object_list = self.model.objects.all()
+            
+        return object_list
 
     def get_context_data(self, **kwargs):
         now = datetime.datetime.now()
@@ -323,19 +337,20 @@ def UpdateRolParticipate(request,pk):
 #         else:
 #             context['messages']="No existe ningún cliente"
             # return context
-    
-def proyectos(request):
-    queryset = request.GET.get("buscar")
-    if queryset:
-        cat = Category.objects.filter (
-            Q(name = queryset)
-        )
-        items = Project.objects.filter(idCategory__in = cat)
-    return render(request,'nucleo/project_list.html',{'items':items})
 
+    
 # def proyectos(request):
 #     queryset = request.GET.get("buscar")
-#     items = Project.objects.all()
+#     # items = Project.objects.all()
+    
+#     if queryset:
+#         cat = Category.objects.filter (
+#             Q(name = queryset)
+#         )
+#         items = Project.objects.filter(idCategory__in = cat)
+        
+#     return render(request,'nucleo/project_list.html',{'items':items})
+
     
 #     if queryset:
 #         cat = Category.objects.filter (
@@ -373,4 +388,29 @@ class CategoryDeleteView(DeleteView):
         except Exception as e:
             data['error'] = str(e)
         return HttpResponseRedirect('/categoryList/')
+
+
+# class ProjectNextWeekListView(ListView):
+#     model=Project
+#     template_name="nucleo/ListNextWeek_list.html"
+#     projects = Project.objects.all()    
+#     # print(item[0].startDate.weekday())
+#     @staticmethod
+#     def get_next_week():
+#         now = datetime.datetime.now()
+#         # print(project.startDate.weekday())
+#         weekDayNow = now.weekday()
+#         diasRestantes = 7 - weekDayNow
+        
+#         monday = weekDayNow + diasRestantes
+#         sunday = monday + 6
+#         return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
+      
+            
+            
     
+#     def get_context_data(self, **kwargs):
+#         now = datetime.datetime.now()
+#         context = super().get_context_data(**kwargs)
+#         context['projectsDates'] = self.get_next_week()
+#         return context

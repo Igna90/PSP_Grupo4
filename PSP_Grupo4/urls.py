@@ -42,7 +42,6 @@ urlpatterns = [
     path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
     path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
     path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
-    path('projectsCategory/', login_required(views.proyectos), name='projectsCategory'),
     path('deleteProjects/<int:pk>', login_required(views.ProjectDeleteView.as_view()), name='deleteProjects'),
     path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
     path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
@@ -60,6 +59,9 @@ urlpatterns = [
     path('listEmployeeProjects/', login_required(views.EmployeeProjectView.as_view()), name='listEmployeeProjects'),
     path('clientProjectView/', login_required(views.ClientProjectView.as_view()), name='clientProjectView'),
     path('updateRol/<int:pk>', login_required(views.UpdateRolParticipate), name='updateRol'),
+    path('createdParticipate/<int:pk>', views.agregarParticipa, name='createdParticipate'),
+    path('listParticipate/', views.ParticipateView.as_view(), name='listParticipate'),
+    # path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
    
 ]
 

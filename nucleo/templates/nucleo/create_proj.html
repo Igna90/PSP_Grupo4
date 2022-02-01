@@ -6,8 +6,12 @@
                     <div class="back">
                         <h2>Crear Proyecto</h2>
                         <form action="{% url 'guardarProject' %}" class="form" method="POST">
+                            <input type="hidden" name="idEmployee" value="{{ request.user.id }}"/>
                         {% csrf_token %}
                         {{form|crispy}}
+                        
+                        
+
                     {% if field.errors %}
                     {{ field.errors }}
                     {% endif %}

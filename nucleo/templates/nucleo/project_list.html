@@ -47,23 +47,19 @@
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteProjects' item.id %}">Eliminar</a></button>
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'updateProject' item.id %}">Editar</a></button>
                     {% endif %}
-                    
-                    {% if request.user.role_user == "Cliente"  %}
-                      <form action="{% url 'createdParticipate' item.id %}" method="post">
+                    {% for projectDate in projectsDates %}
+                    {% if request.user.role_user == "Cliente" and item.id == projectDate.id %}
                         {% csrf_token %}
-                        <input type="hidden" name="idClient" value={{request.user.id}}/>
-                        
-                        <button type=submit class="btn btn-primary bot">Inscribirse</button>
-                        
-                      </form>
-                      {% endif %}
-                    
+                        <button class="btn btn-primary bot"><a class="bl" href="{% url 'projectParticipate' item.id %}">Inscribirse</a></button>
+                        {% endif %}
+                    {% endfor %}
                   </td>
                 </tr>
                 {% endfor %}
               </tbody>
             </table>
             <div class="row">
+              {% if request.user.role_user == 'Empleado' %}
               <div class="col-5">
                 {% if request.user.role_user == 'Empleado' %}
                 <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>

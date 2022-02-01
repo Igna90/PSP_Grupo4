@@ -23,9 +23,15 @@
             </div>
           </div>
           <br>
+          {% if request.user.role_user == "Cliente" %}
+          <p class="s">* Podrás inscribirte sólo en aquellos proyectos que aún no hayan comenzado</p>
+          {% else %}
+          <p class="s">* Podrás eliminar y editar solo tus propios proyectos</p>
+          {% endif %}
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
+                  <th>Id</th>
                   <th>Titulo</th>
                   <th>Descripcion</th>
                   <th>Nivel</th>
@@ -39,6 +45,7 @@
               <tbody>
                 {% for item in object_list %}
                 <tr class="a">
+                  <td>{{ item.id }}</td>
                   <td>{{ item.title }}</td>
                   <td>{{ item.description }}</td>
                   <td>{{ item.level }}</td>

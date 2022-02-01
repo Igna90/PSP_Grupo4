@@ -16,6 +16,7 @@
               <tbody>
                 {% for item in category_list %}
                 <tr class="a">
+                  <td>{{ item.id }}</td>
                   <td>{{ item.name }}</td>
                   {% if item.image %}
                   <td>

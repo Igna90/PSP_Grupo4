@@ -19,7 +19,7 @@
               <tbody>
                 {% for participate in participates %}
                 {% for project in projects %}
-                {% if request.user.id == participate.idCliente.id and project.id == participate.idProject.id %}
+                {% if project.id == participate.idProject.id %}
                     <tr class="a">
                       <td>{{ project.id }}</td>
                       <td>{{ project.title }}</td>

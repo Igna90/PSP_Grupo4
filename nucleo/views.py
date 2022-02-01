@@ -1,6 +1,7 @@
 from audioop import reverse
 from contextlib import nullcontext
 import datetime
+from http.client import HTTPResponse
 from msilib.schema import ListView
 from multiprocessing import context
 from multiprocessing.connection import Client
@@ -71,14 +72,14 @@ class FormCreateCategoryView(HttpRequest):
 class FormularioProjectView(HttpRequest):
     def index(request):
         projectForm = ProjectForm()
-        return render(request, "nucleo/create_proj.html", {"form":ProjectForm})
+        return render(request, "nucleo/create_proj.html", {"form":projectForm})
     def procesar_formulario(request):
         projectForm = ProjectForm(request.POST)
         if request.method =='POST' and  projectForm.is_valid():
             projectForm.save()
             messages.success(request, "El proyecto se ha creado correctamente")
             return redirect(('listProjects'))
-        return render(request, "nucleo/create_proj.html", {"form":ProjectForm})
+        return render(request, "nucleo/create_proj.html", {"form":projectForm})
             
 class login_view(HttpRequest):
     def loginUser(request):
@@ -202,10 +203,10 @@ class ParticipateView(ListView):
     second_model = Project
     template_name="nucleo/participate_list.html"
     
-    def get_context_data(self, **kwargs):
+    def get_context_data(self,**kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
-        context['participates'] = Participate.objects.all().order_by("idProject")
+        context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id)
         context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
         return context
     
@@ -230,13 +231,13 @@ def agregarParticipa(request,pk):
         messages.success(request,"Has sido inscrito satisfactoriamente")
         return redirect(("listProjects"))
     
-def ActiveUser(pk):
-    u = User.objects.get(pk=pk)
+def ActiveUser(request,pk):
+    u = User.objects.get(id=pk)
     u.active = True
     u.save()
     return HttpResponseRedirect('/userList/')
 
-def DeactiveUser(pk):
+def DeactiveUser(request,pk):
     u = User.objects.get(id=pk)
     u.active = False
     u.save()
@@ -256,9 +257,73 @@ class ProjectListView(ListView):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
         context['projectsDates'] = Project.objects.filter(startDate__gt=now)
-        context['participates']= Participate.objects.all()
         return context
 
+class EmployeeProjectView(ListView):
+    model = Project
+    template_name="nucleo/employee_project.html"
+            
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['projects'] = Project.objects.filter(idEmployee_id=self.request.user.pk)
+        return context
+
+class ClientProjectView(ListView):
+    model = Participate
+    template_name="nucleo/client_project.html"
+    
+    def post(self,*args,**kwargs):
+        if self.request.method == "POST":
+            role = self.request.POST.get('rol')
+            id = self.request.POST.get('id')
+            idProject = self.request.POST.get('idProject')
+            Participate.objects.filter(pk=id).update(rol = role)
+            participates = Participate.objects.filter(idProject_id = idProject)
+            return render(self.request,'nucleo/client_project.html',{'participates':participates})
+            
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        idProject = self.request.GET.get('idProject')
+        context['participates'] = Participate.objects.filter(idProject_id = idProject)
+        return context 
+
+def UpdateRolParticipate(request,pk):
+    if request.method == "POST":
+        part = Participate.objects.filter(pk=pk)
+        role = request.POST.get('rol')
+        part.update(rol = role)
+        idProject = request.GET.get('idProject')
+        return render(request,'nucleo/client_project.html',{"idProject" : idProject})
+    
+    
+    
+# class ClientProjectView(ListView):
+#     model = User 
+#     template_name= "nucleo/client_projects.html"
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         context['projects'] = Project.objects.filter(idEmployee = self.request.user.id)
+#         context['participates'] = Participate.objects.all()
+#         context['clients'] = User.objects.filter(role_user="Cliente")
+#         return context
+    
+# class ClientProjectView(ListView):
+#     model = User
+#     template_name= "nucleo/client_projects.html"
+    
+#     def get_context_data(self, **kwargs):
+#         context = super().get_context_data(**kwargs)
+#         idProj = Project.objects.filter(idEmployee_id = self.request.user.id)
+#         idCli = Participate.objects.filter(idProject__in=idProj)
+#         clients = User.objects.filter(pk__in=idCli).exists()
+#         if(clients == True):
+#             context['clients']=User.objects.filter(pk__in=idCli)
+#             return context
+#         else:
+#             context['messages']="No existe ningún cliente"
+            # return context
+    
 def proyectos(request):
     queryset = request.GET.get("buscar")
     if queryset:
@@ -279,9 +344,6 @@ def proyectos(request):
 #         items = Project.objects.filter(idCategory__in = cat)
         
 #     return render(request,'nucleo/project_list.html',{'items':items})
-        
-class ProjectDetailView(DetailView):
-    model=Project
 
 class CategoryListView(ListView):
     model=Category

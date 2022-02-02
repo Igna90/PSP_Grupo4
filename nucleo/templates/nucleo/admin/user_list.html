@@ -20,30 +20,29 @@
                 </tr>
               </thead>
               <tbody>
-                {% for item in items %}
+                {% for user in users %}
                 <tr class="a">
-                  <td>{{ item.id }}</td>
-                  <td>{{ item.dni }}</td>
-                  <td>{{ item.name }}</td>
-                  <td >{{ item.surname }}</td>
-                  <td>{{ item.address }}</td>
-                  <td>{{ item.birthDate }}</td>
-                  <td>{{ item.registerDate }}</td>
-                  {%if item.active == False %}
+                  <td>{{ user.id }}</td>
+                  <td>{{ user.dni }}</td>
+                  <td>{{ user.name }}</td>
+                  <td >{{ user.surname }}</td>
+                  <td>{{ user.address }}</td>
+                  <td>{{ user.birthDate }}</td>
+                  <td>{{ user.registerDate }}</td>
+                  {%if user.active == False %}
                   <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'activeUser' item.id %}">Activar</a></button>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'activeUser' user.id %}">Activar</a></button>
+                  </td>
+                  {% else %}
+                  <td>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deactiveUser' user.id %}">Desactivar</a></button>
                   </td>
                   {% endif %}
-                  {%if item.active == True %}
                   <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deactiveUser' item.id %}">Desactivar</a></button>
-                  </td>
-                  {% endif %}
-                  <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteUser' item.id %}">Eliminar</a></button>
+                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteUser' user.id %}">Eliminar</a></button>
                   </td>
                   <td>
-                    <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateUser' item.id %}">Editar</a></button>
+                    <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateUser' user.id %}">Editar</a></button>
                   </td>
                 </tr>
                 {% endfor %}

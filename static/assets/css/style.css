@@ -1388,3 +1388,49 @@ input::-moz-placeholder {
 .bot a{
   color:white;
 }
+#div_id_image{
+  padding-top: 25px;
+}
+#div_id_image input{
+  padding-top: 25px;
+  padding-bottom: 25px;
+  color:white;
+}
+
+#contact{
+  background-color: #dee2e6;
+}
+
+#h .h-container{
+    position: absolute;
+    bottom: 0;
+    top: 300px;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+}
+
+#h .h-container{
+  position: absolute;
+  bottom: 0;
+  top: -100px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+}
+#h .h-container h2{
+  color: #fff;
+  margin-bottom: 50px;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: 700;
+  text-shadow: -1px 0 2px #2f4d5a;
+}

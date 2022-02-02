@@ -1,25 +1,34 @@
 {% extends 'nucleo/index.html' %}
-
     {% block content %}
     <section id="auto">
         <div class="container">
             <h2 class="ss">Proyectos</h2>
-
-
-          <form method="GET">
-          <select name="buscar" value="{{ request.get.buscar }}">
-            <option selected disabled="true" name="buscar">Selecciona Categoria --</option>
-            {% for category in categorys %}
-            <option value="{{ category.id }}"> {{category.name }}</option>
-            {% endfor %}
-          </select>
-          <button type="submit" class="boton btn-success">Buscar</button>
-
-        </form>
-
+          <div class="container">
+            <div class="row">
+              <div class="col-md-8 search">
+                <form method="GET">
+                  <select name="buscar" id="buscar" value="{{ request.get.buscar }}">
+                    <option selected disabled="true" name="buscar">Selecciona Categoria --</option>
+                    {% for category in categorys %}
+                    <option value="{{ category.id }}"> {{ category.name }}</option>
+                    {% endfor %}
+                  </select>
+                  <button type="submit" class="btn btn-primary bot">Buscar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+          <br>
+          {% if request.user.role_user == "Cliente" %}
+          <p class="s">* Podrás inscribirte sólo en aquellos proyectos que aún no hayan comenzado</p>
+          {% else %}
+          <p class="s">* Podrás eliminar y editar solo tus propios proyectos</p>
+          {% endif %}
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
+                  <th>Id</th>
+                  <th>Empleado</th>
                   <th>Titulo</th>
                   <th>Descripcion</th>
                   <th>Nivel</th>
@@ -31,10 +40,10 @@
                 </tr>
               </thead>
               <tbody>
-                
                 {% for item in project_list %}
-                
                 <tr class="a">
+                  <td>{{ item.id }}</td>
+                  <td >{{ item.idEmployee }}</td>
                   <td>{{ item.title }}</td>
                   <td>{{ item.description }}</td>
                   <td>{{ item.level }}</td>
@@ -60,7 +69,6 @@
             </table>
             <div class="row">
               <div class="col-5">
-                {% if request.user.role_user == 'Empleado' %}
                 <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>
               </div>
               <div class="col-7 frm">

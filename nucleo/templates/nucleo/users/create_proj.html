@@ -9,9 +9,6 @@
                             <input type="hidden" name="idEmployee" value="{{ request.user.id }}"/>
                         {% csrf_token %}
                         {{form|crispy}}
-                        
-                        
-
                     {% if field.errors %}
                     {{ field.errors }}
                     {% endif %}

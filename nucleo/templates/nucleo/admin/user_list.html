@@ -31,11 +31,20 @@
                   <td>{{ user.registerDate }}</td>
                   {%if user.active == False %}
                   <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'activeUser' user.id %}">Activar</a></button>
+                    <form action="{% url 'activeUser' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="idClient" value="{{ user.id }}"/>
+                    <button type="submit" class="btn btn-primary bot">Activar</button>
+                    </form>
+
                   </td>
                   {% else %}
                   <td>
-                    <button class="btn btn-primary bot"><a class="bl" href="{% url 'deactiveUser' user.id %}">Desactivar</a></button>
+                   <form action="{% url 'activeUser' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="idClient" value="{{ user.id }}"/>
+                    <button type="submit" class="btn btn-primary bot">Desactivar</button>
+                  </form>
                   </td>
                   {% endif %}
                   <td>
@@ -44,6 +53,7 @@
                   <td>
                     <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateUser' user.id %}">Editar</a></button>
                   </td>
+                
                 </tr>
                 {% endfor %}
               </tbody>

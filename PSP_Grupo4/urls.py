@@ -35,8 +35,7 @@ urlpatterns = [
     
     #ROL_ADMIN
     path('userList/',login_required(views.UserList.as_view()), name='userList'),
-    path('activeUser/<int:pk>', login_required(views.ActiveUser) , name='activeUser'),
-    path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
+    path('activeUser/', login_required(views.ActiveUserView.as_view()) , name='activeUser'),
     path('deleteClient/<int:pk>',login_required(views.UserDeleteView.as_view()), name='deleteUser'),
     path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
     path('updateEmployee/<int:pk>', login_required(views.EmployeeUpdateView.as_view()) , name='updateEmployee'),

@@ -247,15 +247,16 @@ class ParticipateView(ListView):
 
 
 def project_participate(request,pk):
-    projects = Project.objects.filter(pk=pk)
-    isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
-    if (isParticipates == False):
-        context = {
-            'projects' : projects,
-            }
-        return render(request,"nucleo/users/project_participate.html",context)
-    else:
-        return render(request,'nucleo/users/is_participate.html')
+    if request.user.is_admin:
+        projects = Project.objects.filter(pk=pk)
+        isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
+        if (isParticipates == False):
+            context = {
+                'projects' : projects,
+                }
+            return render(request,"nucleo/users/project_participate.html",context)
+        else:
+            return render(request,'nucleo/users/is_participate.html')
     
 def agregarParticipa(request,pk):
     if request.method=="POST":
@@ -267,19 +268,23 @@ def agregarParticipa(request,pk):
         messages.success(request,"Has sido inscrito satisfactoriamente")
         return redirect(("listProjects"))
 
-
-def ActiveUser(request,pk):
-    u = User.objects.get(id=pk)
-    u.active = True
-    u.save()
-    return HttpResponseRedirect('/userList/')
-
-def DeactiveUser(request,pk):
-    u = User.objects.get(id=pk)
-    u.active = False
-    u.save()
-    return HttpResponseRedirect('/userList/')
-
+@method_decorator(is_admin,name="dispatch")   
+class ActiveUserView(UpdateView):
+    def post(self, *args,**kwargs):
+        if self.request.method =="POST":
+            id = self.request.POST.get('idClient')
+            user = User.objects.get(pk=id)
+            if(user.active == False):
+                user.active = True
+                user.save()
+                users = User.objects.filter(role_user="Cliente")
+                return render(self.request,"nucleo/admin/user_list.html",{'users':users})
+            else:
+                user.active = False
+                user.save()
+                users = User.objects.filter(role_user="Cliente")
+                return render(self.request,"nucleo/admin/user_list.html",{'users':users})
+        
 @method_decorator(is_not_admin,name="dispatch")
 @method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):

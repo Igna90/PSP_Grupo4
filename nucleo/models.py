@@ -1,7 +1,9 @@
+from django import forms
 from django.db import models
 from django.db.models.deletion import DO_NOTHING
 import datetime
 from django.contrib.auth.models import AbstractUser
+from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _
 # Create your models here.
 
@@ -60,6 +62,8 @@ class Project(models.Model):
     
     def __str__(self):
         return format(self.title)
+    
+    
     
 class Participate(models.Model):
     id=models.AutoField(primary_key=True)

@@ -1272,7 +1272,7 @@ input::-moz-placeholder {
 .bot{
   background: linear-gradient(90deg, #CFF37D 0%, #7DE88C 100%);
   /* Shadow Dark · 8dp */
-  margin-top: 20px;
+  margin: 5px;
   /* box-shadow: 0px 8px 16px rgba(8, 35, 48, 0.1), 0px 4px 8px rgba(8, 35, 48, 0.16); */
   border-radius: 8px;
   /* display: flex; */

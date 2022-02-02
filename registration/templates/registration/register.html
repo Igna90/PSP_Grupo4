@@ -4,7 +4,7 @@
             <section id="h">
                 <div class="hero-container" data-aos="fade-up">
                     <div class="back">
-                        <h2>Registro</h2>
+                        <h2>Registrar Usuario</h2>
                         <form action="{% url 'guardarClient' %}" class="form" method="POST">
                         {% csrf_token %}
                         {{form|crispy}}

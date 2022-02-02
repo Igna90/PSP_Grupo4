@@ -36,7 +36,10 @@ class FormularioClientView(HttpRequest):
     def procesar_formulario(request):
         userForm = UserForm(request.POST)
         if request.method =='POST' and  userForm.is_valid():
-            userForm.save()
+            now = datetime.datetime.now()    
+            formulario = userForm.save()
+            formulario.registerDate = now
+            formulario.save()
             messages.success(request, "El usuario ha sido registrado correctamente, vaya a acceder para comenzar")
             return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})

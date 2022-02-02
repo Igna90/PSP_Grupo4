@@ -307,14 +307,6 @@ class ClientProjectView(ListView):
         context['participates'] = Participate.objects.filter(idProject_id = idProject)
         return context 
 
-def UpdateRolParticipate(request,pk):
-    if request.method == "POST":
-        part = Participate.objects.filter(pk=pk)
-        role = request.POST.get('rol')
-        part.update(rol = role)
-        idProject = request.GET.get('idProject')
-        return render(request,'nucleo/users/client_project.html',{"idProject" : idProject})
-
 class CategoryListView(ListView):
     model=Category
     template_name="nucleo/admin/category_list.html"

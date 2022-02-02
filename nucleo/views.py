@@ -259,7 +259,6 @@ class SignProject(HttpRequest):
            a = User.objects.get(id=pk)
            b = Participate.objects.create()
 
-
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"
@@ -336,7 +335,6 @@ class CategoryDeleteView(DeleteView):
         except Exception as e:
             data['error'] = str(e)
         return HttpResponseRedirect('/categoryList/')
-
 
 class ProjectNextWeekListView(ListView):
     model=Project

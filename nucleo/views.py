@@ -37,7 +37,7 @@ class FormularioClientView(HttpRequest):
         if request.method =='POST' and  userForm.is_valid():
             userForm.save()
             messages.success(request, "El usuario ha sido registrado correctamente, vaya a acceder para comenzar")
-            return redirect(('index'))
+            return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})
 
 class FormularioEmployeeView(HttpRequest):
@@ -51,10 +51,9 @@ class FormularioEmployeeView(HttpRequest):
             formulario.role_user = 'Empleado'
             formulario.save()
             messages.success(request, "El usuario ha sido registrado correctamente")
-            return redirect(('index'))
+            return redirect(('employeeList'))
         return render(request, "registration/create_emp.html", {"form":userForm})
 
-    
 class FormCreateCategoryView(HttpRequest):
     def index(request):
         catForm = CategoryForm()
@@ -62,8 +61,6 @@ class FormCreateCategoryView(HttpRequest):
     def procesar_formulario(request):
         catForm = CategoryForm(request.POST, request.FILES)
         if request.method =='POST' and  catForm.is_valid():
-            
-            
             catForm.save()
             messages.success(request, "La categoria ha sido registrada correctamente")
             return redirect(('categoryList'))
@@ -72,7 +69,7 @@ class FormCreateCategoryView(HttpRequest):
 class FormularioProjectView(HttpRequest):
     def index(request):
         projectForm = ProjectForm()
-        return render(request, "nucleo/create_proj.html", {"form":projectForm})
+        return render(request, "nucleo/users/create_proj.html", {"form":projectForm})
     def procesar_formulario(request):
         projectForm = ProjectForm(request.POST)
         project = projectForm.save(commit=False)
@@ -82,7 +79,7 @@ class FormularioProjectView(HttpRequest):
             project.save()
             messages.success(request, "El proyecto se ha creado correctamente")
             return redirect(('listProjects'))
-        return render(request, "nucleo/create_proj.html", {"form":projectForm})
+        return render(request, "nucleo/users/create_proj.html", {"form":projectForm})
             
 class login_view(HttpRequest):
     def loginUser(request):
@@ -121,7 +118,7 @@ def logout_request(request):
 
 class EmployeeList(ListView):
     model=User
-    template_name="nucleo/employee_list.html"
+    template_name="nucleo/admin/employee_list.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['users'] = User.objects.filter(role_user='Empleado')
@@ -129,7 +126,7 @@ class EmployeeList(ListView):
     
 class UserList(ListView):
     model=User
-    template_name="nucleo/user_list.html"
+    template_name="nucleo/admin/user_list.html"
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['users'] = User.objects.filter(role_user='Cliente')
@@ -137,7 +134,7 @@ class UserList(ListView):
 
 class UserDeleteView(DeleteView):
     model= User
-    template_name='nucleo/delete.html'
+    template_name='nucleo/admin/delete.html'
     succes_url = reverse_lazy('nucleo:user_list')
     url_redirect = succes_url
     
@@ -151,26 +148,38 @@ class UserDeleteView(DeleteView):
             self.object.delete()
         except Exception as e:
             data['error'] = str(e)
-        return HttpResponseRedirect('/userList/')
+        if(self.object.role_user =="Cliente"):
+            return HttpResponseRedirect('/userList/')
+        else:
+            return HttpResponseRedirect('/employeeList/')
     
 class UserUpdateView(UpdateView):
         model= User
         form_class = UserForm
-        template_name='nucleo/update.html'
+        template_name='nucleo/admin/update.html'
         
         def dispatch(self, request, *args, **kwargs):
             self.object = self.get_object()
             return super().dispatch(request, *args, **kwargs)
         
         def get_success_url(self):
-            if(self.object.role_user=="Cliente"):
-                return '/userList/'
-            else:
-                return '/employeeList/'
+            return '/userList/'
+            
+class EmployeeUpdateView(UpdateView):
+        model= User
+        form_class = EmployeeForm
+        template_name='nucleo/admin/update.html'
+        
+        def dispatch(self, request, *args, **kwargs):
+            self.object = self.get_object()
+            return super().dispatch(request, *args, **kwargs)
+        
+        def get_success_url(self):
+            return '/employeeList/'
     
 class ProjectDeleteView(DeleteView):
     model= Project
-    template_name='nucleo/deleteproject.html'
+    template_name='nucleo/users/deleteproject.html'
     succes_url = reverse_lazy('nucleo:projects_list')
     url_redirect = succes_url
     
@@ -189,7 +198,7 @@ class ProjectDeleteView(DeleteView):
 class ProjectUpdateView(UpdateView):
         model= Project
         form_class = ProjectForm
-        template_name='nucleo/updateproject.html'
+        template_name='nucleo/users/updateproject.html'
         
         def dispatch(self, request, *args, **kwargs):
             self.object = self.get_object()
@@ -200,7 +209,7 @@ class ProjectUpdateView(UpdateView):
 
 class ParticipateView(ListView):
     model = Participate
-    template_name="nucleo/participate_list.html"
+    template_name="nucleo/users/participate_list.html"
     
     def get_context_data(self,**kwargs):
         now = datetime.datetime.now()
@@ -219,9 +228,9 @@ def project_participate(request,pk):
         context = {
             'projects' : projects,
             }
-        return render(request,"nucleo/project_participate.html",context)
+        return render(request,"nucleo/users/project_participate.html",context)
     else:
-        return render(request,'nucleo/is_participate.html')
+        return render(request,'nucleo/users/is_participate.html')
 
 def agregarParticipa(request,pk):
     if request.method=="POST":
@@ -253,7 +262,7 @@ class SignProject(HttpRequest):
 
 class ProjectListView(ListView):
     model=Project
-    template_name="nucleo/project_list.html"
+    template_name="nucleo/users/project_list.html"
     
     def get_queryset(self):
         query = self.request.GET.get('buscar')
@@ -272,7 +281,7 @@ class ProjectListView(ListView):
 
 class EmployeeProjectView(ListView):
     model = Project
-    template_name="nucleo/employee_project.html"
+    template_name="nucleo/users/employee_project.html"
             
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -281,7 +290,7 @@ class EmployeeProjectView(ListView):
 
 class ClientProjectView(ListView):
     model = Participate
-    template_name="nucleo/client_project.html"
+    template_name="nucleo/users/client_project.html"
     
     def post(self,*args,**kwargs):
         if self.request.method == "POST":
@@ -290,7 +299,7 @@ class ClientProjectView(ListView):
             idProject = self.request.POST.get('idProject')
             Participate.objects.filter(pk=id).update(rol = role)
             participates = Participate.objects.filter(idProject_id = idProject)
-            return render(self.request,'nucleo/client_project.html',{'participates':participates})
+            return render(self.request,'nucleo/users/client_project.html',{'participates':participates})
             
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -304,22 +313,23 @@ def UpdateRolParticipate(request,pk):
         role = request.POST.get('rol')
         part.update(rol = role)
         idProject = request.GET.get('idProject')
-        return render(request,'nucleo/client_project.html',{"idProject" : idProject})
+        return render(request,'nucleo/users/client_project.html',{"idProject" : idProject})
 
 class CategoryListView(ListView):
     model=Category
+    template_name="nucleo/admin/category_list.html"
     
 class editCategory(UpdateView):
     model= Category
     form_edit = EditCategoryForm
-    template_name='nucleo/category_form.html'
+    template_name='nucleo/admin/category_form.html'
     fields = ['name','image']
     def get_success_url(self):
         return '/categoryList/'
     
 class CategoryDeleteView(DeleteView):
     model= Category
-    template_name='nucleo/delete_category.html'
+    template_name='nucleo/admin/delete_category.html'
     succes_url = reverse_lazy('nucleo:categoryList')
     url_redirect = succes_url
     

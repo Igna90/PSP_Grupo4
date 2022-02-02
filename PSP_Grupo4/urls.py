@@ -39,6 +39,7 @@ urlpatterns = [
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
     path('deleteClient/<int:pk>',login_required(views.UserDeleteView.as_view()), name='deleteUser'),
     path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
+    path('updateEmployee/<int:pk>', login_required(views.EmployeeUpdateView.as_view()) , name='updateEmployee'),
     path('employeeList/', login_required(views.EmployeeList.as_view()), name='employeeList'),
     path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
     path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),

@@ -9,6 +9,7 @@
                 <tr>
                   <th>Id</th>
                   <th>DNI</th>
+                  <th>Nombre de Usuario</th>
                   <th>Nombre</th>
                   <th>Apellidos</th>
                   <th>Dirección</th>
@@ -22,6 +23,7 @@
                 <tr class="a">
                   <td>{{ user.id }}</td>
                   <td>{{ user.dni }}</td>
+                  <td>{{ user.username }}</td>
                   <td>{{ user.name }}</td>
                   <td >{{ user.surname }}</td>
                   <td>{{ user.address }}</td>
@@ -30,7 +32,7 @@
                     <button class="btn btn-primary bot"><a class="bl" href="{% url 'deleteUser' user.id %}">Eliminar</a></button>
                   </td>
                   <td>
-                    <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateUser' user.id %}">Editar</a></button>
+                    <button class="btn btn-primary bot"><a  class="bl" href="{% url 'updateEmployee' user.id %}">Editar</a></button>
                   </td>
                 </tr>
                 {% endfor %}

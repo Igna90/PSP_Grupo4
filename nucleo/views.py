@@ -6,6 +6,7 @@ from msilib.schema import ListView
 from multiprocessing import context
 from multiprocessing.connection import Client
 import os
+from django.utils.decorators import method_decorator
 from re import template
 
 from tkinter.tix import MAX, Select
@@ -16,6 +17,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.views import View
+from nucleo.decorators import is_active, is_admin, is_client, is_employee, is_not_admin
 from nucleo.models import Category, Participate, Project, User
 from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpdateForm,CategoryForm
 from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
@@ -25,10 +27,11 @@ from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
 from django.views.generic import DeleteView,UpdateView, DetailView, ListView,TemplateView
 from django.db.models import Q
 
-
 def index(request):
     return render(request, "nucleo/index.html")
 
+@method_decorator(is_admin,name="index")
+@method_decorator(is_admin,name="procesar_formulario")
 class FormularioClientView(HttpRequest):
     def index(request):
         userForm = UserForm()
@@ -44,6 +47,8 @@ class FormularioClientView(HttpRequest):
             return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})
 
+@method_decorator(is_admin,name="index")
+@method_decorator(is_admin,name="procesar_formulario")
 class FormularioEmployeeView(HttpRequest):
     def index(request):
         userForm = EmployeeForm()
@@ -57,7 +62,9 @@ class FormularioEmployeeView(HttpRequest):
             messages.success(request, "El usuario ha sido registrado correctamente")
             return redirect(('employeeList'))
         return render(request, "registration/create_emp.html", {"form":userForm})
-
+    
+@method_decorator(is_admin,name="index")
+@method_decorator(is_admin,name="procesar_formulario")
 class FormCreateCategoryView(HttpRequest):
     def index(request):
         catForm = CategoryForm()
@@ -70,6 +77,8 @@ class FormCreateCategoryView(HttpRequest):
             return redirect(('categoryList'))
         return render(request, "registration/create_cat.html", {"form":catForm})
     
+@method_decorator(is_employee,name="index")
+@method_decorator(is_employee,name="procesar_formulario")
 class FormularioProjectView(HttpRequest):
     def index(request):
         projectForm = ProjectForm()
@@ -81,7 +90,6 @@ class FormularioProjectView(HttpRequest):
         if project.endDate < project.startDate:
             messages.error(request, "La fecha final de proyecto debe ser mayor a la de inicio")
             return redirect(('createProject'))
-            
         
         if request.method =='POST' and  projectForm.is_valid():
             project.save()
@@ -124,6 +132,7 @@ def logout_request(request):
      messages.success(request,"Has salido satisfactoriamente")
      return redirect("index")
 
+@method_decorator(is_admin,name="dispatch")
 class EmployeeList(ListView):
     model=User
     template_name="nucleo/admin/employee_list.html"
@@ -132,6 +141,7 @@ class EmployeeList(ListView):
         context['users'] = User.objects.filter(role_user='Empleado')
         return context
     
+@method_decorator(is_admin,name="dispatch")   
 class UserList(ListView):
     model=User
     template_name="nucleo/admin/user_list.html"
@@ -139,7 +149,8 @@ class UserList(ListView):
         context = super().get_context_data(**kwargs)
         context['users'] = User.objects.filter(role_user='Cliente')
         return context
-
+    
+@method_decorator(is_admin,name="dispatch")
 class UserDeleteView(DeleteView):
     model= User
     template_name='nucleo/admin/delete.html'
@@ -160,7 +171,8 @@ class UserDeleteView(DeleteView):
             return HttpResponseRedirect('/userList/')
         else:
             return HttpResponseRedirect('/employeeList/')
-    
+        
+@method_decorator(is_admin,name="dispatch")
 class UserUpdateView(UpdateView):
         model= User
         form_class = UserForm
@@ -172,7 +184,8 @@ class UserUpdateView(UpdateView):
         
         def get_success_url(self):
             return '/userList/'
-            
+        
+@method_decorator(is_admin,name="dispatch")         
 class EmployeeUpdateView(UpdateView):
         model= User
         form_class = EmployeeForm
@@ -184,7 +197,8 @@ class EmployeeUpdateView(UpdateView):
         
         def get_success_url(self):
             return '/employeeList/'
-    
+        
+@method_decorator(is_employee,name="dispatch")
 class ProjectDeleteView(DeleteView):
     model= Project
     template_name='nucleo/users/deleteproject.html'
@@ -203,6 +217,7 @@ class ProjectDeleteView(DeleteView):
             data['error'] = str(e)
         return HttpResponseRedirect('/listProjects/')
     
+@method_decorator(is_employee,name="dispatch")  
 class ProjectUpdateView(UpdateView):
         model= Project
         form_class = ProjectForm
@@ -215,6 +230,7 @@ class ProjectUpdateView(UpdateView):
         def get_success_url(self):
             return '/listProjects/'
 
+@method_decorator(is_not_admin,name="dispatch") 
 class ParticipateView(ListView):
     model = Participate
     template_name="nucleo/users/participate_list.html"
@@ -228,7 +244,8 @@ class ParticipateView(ListView):
             project = Project.objects.filter(endDate__lt=now).order_by("startDate")
             context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id,idProject_id__in=project)
         return context
-    
+
+
 def project_participate(request,pk):
     projects = Project.objects.filter(pk=pk)
     isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
@@ -239,7 +256,7 @@ def project_participate(request,pk):
         return render(request,"nucleo/users/project_participate.html",context)
     else:
         return render(request,'nucleo/users/is_participate.html')
-
+    
 def agregarParticipa(request,pk):
     if request.method=="POST":
         idProjecto=Project.objects.get(pk=pk)
@@ -249,7 +266,8 @@ def agregarParticipa(request,pk):
         participate.save()
         messages.success(request,"Has sido inscrito satisfactoriamente")
         return redirect(("listProjects"))
-    
+
+
 def ActiveUser(request,pk):
     u = User.objects.get(id=pk)
     u.active = True
@@ -262,11 +280,8 @@ def DeactiveUser(request,pk):
     u.save()
     return HttpResponseRedirect('/userList/')
 
-class SignProject(HttpRequest):
-     def register(request,pk):
-           a = User.objects.get(id=pk)
-           b = Participate.objects.create()
-
+@method_decorator(is_not_admin,name="dispatch")
+@method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"
@@ -285,7 +300,8 @@ class ProjectListView(ListView):
         context['projectsDates'] = Project.objects.filter(startDate__gt=now)
         context['categorys'] = Category.objects.all()
         return context
-
+    
+@method_decorator(is_employee,name="dispatch")
 class EmployeeProjectView(ListView):
     model = Project
     template_name="nucleo/users/employee_project.html"
@@ -294,7 +310,8 @@ class EmployeeProjectView(ListView):
         context = super().get_context_data(**kwargs)
         context['projects'] = Project.objects.filter(idEmployee_id=self.request.user.pk)
         return context
-
+    
+@method_decorator(is_employee,name="dispatch")
 class ClientProjectView(ListView):
     model = Participate
     template_name="nucleo/users/client_project.html"
@@ -314,10 +331,12 @@ class ClientProjectView(ListView):
         context['participates'] = Participate.objects.filter(idProject_id = idProject)
         return context 
 
+@method_decorator(is_admin,name="dispatch")
 class CategoryListView(ListView):
     model=Category
     template_name="nucleo/admin/category_list.html"
-    
+
+@method_decorator(is_admin,name="dispatch")
 class editCategory(UpdateView):
     model= Category
     form_edit = EditCategoryForm
@@ -325,7 +344,8 @@ class editCategory(UpdateView):
     fields = ['name','image']
     def get_success_url(self):
         return '/categoryList/'
-    
+
+@method_decorator(is_admin,name="dispatch")    
 class CategoryDeleteView(DeleteView):
     model= Category
     template_name='nucleo/admin/delete_category.html'
@@ -344,6 +364,8 @@ class CategoryDeleteView(DeleteView):
             data['error'] = str(e)
         return HttpResponseRedirect('/categoryList/')
 
+@method_decorator(is_client,name="dispatch")
+@method_decorator(is_active,name="dispatch")
 class ProjectNextWeekListView(ListView):
     model=Project
     template_name="nucleo/ListNextWeek_list.html"

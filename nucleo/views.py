@@ -30,8 +30,7 @@ from django.db.models import Q
 def index(request):
     return render(request, "nucleo/index.html")
 
-@method_decorator(is_admin,name="index")
-@method_decorator(is_admin,name="procesar_formulario")
+
 class FormularioClientView(HttpRequest):
     def index(request):
         userForm = UserForm()
@@ -47,8 +46,6 @@ class FormularioClientView(HttpRequest):
             return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})
 
-@method_decorator(is_admin,name="index")
-@method_decorator(is_admin,name="procesar_formulario")
 class FormularioEmployeeView(HttpRequest):
     def index(request):
         userForm = EmployeeForm()
@@ -62,9 +59,7 @@ class FormularioEmployeeView(HttpRequest):
             messages.success(request, "El usuario ha sido registrado correctamente")
             return redirect(('employeeList'))
         return render(request, "registration/create_emp.html", {"form":userForm})
-    
-@method_decorator(is_admin,name="index")
-@method_decorator(is_admin,name="procesar_formulario")
+
 class FormCreateCategoryView(HttpRequest):
     def index(request):
         catForm = CategoryForm()
@@ -77,8 +72,6 @@ class FormCreateCategoryView(HttpRequest):
             return redirect(('categoryList'))
         return render(request, "registration/create_cat.html", {"form":catForm})
     
-@method_decorator(is_employee,name="index")
-@method_decorator(is_employee,name="procesar_formulario")
 class FormularioProjectView(HttpRequest):
     def index(request):
         projectForm = ProjectForm()

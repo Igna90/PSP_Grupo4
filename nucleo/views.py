@@ -7,7 +7,6 @@ from multiprocessing import context
 from multiprocessing.connection import Client
 import os
 from re import template
-import this
 from tkinter.tix import MAX, Select
 from unicodedata import name
 from django.shortcuts import redirect, render
@@ -119,25 +118,22 @@ def logout_request(request):
      logout(request)
      messages.success(request,"Has salido satisfactoriamente")
      return redirect("index")
-     
-def EmployeeList(request):
-    items = User.objects.filter(role_user='Empleado')
-    
-    context={
-        'items': items,
-    }
 
-    return render(request, 'nucleo/employee_list.html', context )
-
-def UserList(request):
+class EmployeeList(ListView):
+    model=User
+    template_name="nucleo/employee_list.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = User.objects.filter(role_user='Empleado')
+        return context
     
-    items = User.objects.filter(role_user='Cliente')
-    
-    context = {
-        'items' : items,
-    }
-    
-    return render(request,'nucleo/user_list.html',context)
+class UserList(ListView):
+    model=User
+    template_name="nucleo/user_list.html"
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['users'] = User.objects.filter(role_user='Cliente')
+        return context
 
 class UserDeleteView(DeleteView):
     model= User
@@ -204,14 +200,16 @@ class ProjectUpdateView(UpdateView):
 
 class ParticipateView(ListView):
     model = Participate
-    second_model = Project
     template_name="nucleo/participate_list.html"
     
     def get_context_data(self,**kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
-        context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id)
-        context['projects'] = Project.objects.filter(endDate__lt=now).order_by("startDate")
+        if(self.request.user.role_user == "Empleado"):
+            context['participates'] = Project.objects.filter(idEmployee_id=self.request.user.id,endDate__lt=now).order_by("startDate")
+        else:
+            project = Project.objects.filter(endDate__lt=now).order_by("startDate")
+            context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id,idProject_id__in=project)
         return context
     
 def project_participate(request,pk):
@@ -255,7 +253,6 @@ class SignProject(HttpRequest):
 
 class ProjectListView(ListView):
     model=Project
-    second_model=Category
     template_name="nucleo/project_list.html"
     
     def get_queryset(self):
@@ -263,14 +260,14 @@ class ProjectListView(ListView):
         if query:
             object_list = self.model.objects.filter(idCategory=query)
         else:
-             object_list = self.model.objects.all()
-            
+             object_list = self.model.objects.all()    
         return object_list
 
     def get_context_data(self, **kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
         context['projectsDates'] = Project.objects.filter(startDate__gt=now)
+        context['categorys'] = Category.objects.all()
         return context
 
 class EmployeeProjectView(ListView):
@@ -308,57 +305,6 @@ def UpdateRolParticipate(request,pk):
         part.update(rol = role)
         idProject = request.GET.get('idProject')
         return render(request,'nucleo/client_project.html',{"idProject" : idProject})
-    
-    
-    
-# class ClientProjectView(ListView):
-#     model = User 
-#     template_name= "nucleo/client_projects.html"
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         context['projects'] = Project.objects.filter(idEmployee = self.request.user.id)
-#         context['participates'] = Participate.objects.all()
-#         context['clients'] = User.objects.filter(role_user="Cliente")
-#         return context
-    
-# class ClientProjectView(ListView):
-#     model = User
-#     template_name= "nucleo/client_projects.html"
-    
-#     def get_context_data(self, **kwargs):
-#         context = super().get_context_data(**kwargs)
-#         idProj = Project.objects.filter(idEmployee_id = self.request.user.id)
-#         idCli = Participate.objects.filter(idProject__in=idProj)
-#         clients = User.objects.filter(pk__in=idCli).exists()
-#         if(clients == True):
-#             context['clients']=User.objects.filter(pk__in=idCli)
-#             return context
-#         else:
-#             context['messages']="No existe ningún cliente"
-            # return context
-
-    
-# def proyectos(request):
-#     queryset = request.GET.get("buscar")
-#     # items = Project.objects.all()
-    
-#     if queryset:
-#         cat = Category.objects.filter (
-#             Q(name = queryset)
-#         )
-#         items = Project.objects.filter(idCategory__in = cat)
-        
-#     return render(request,'nucleo/project_list.html',{'items':items})
-
-    
-#     if queryset:
-#         cat = Category.objects.filter (
-#             Q(name = queryset)
-#         )
-#         items = Project.objects.filter(idCategory__in = cat)
-        
-#     return render(request,'nucleo/project_list.html',{'items':items})
 
 class CategoryListView(ListView):
     model=Category
@@ -390,27 +336,24 @@ class CategoryDeleteView(DeleteView):
         return HttpResponseRedirect('/categoryList/')
 
 
-# class ProjectNextWeekListView(ListView):
-#     model=Project
-#     template_name="nucleo/ListNextWeek_list.html"
-#     projects = Project.objects.all()    
-#     # print(item[0].startDate.weekday())
-#     @staticmethod
-#     def get_next_week():
-#         now = datetime.datetime.now()
-#         # print(project.startDate.weekday())
-#         weekDayNow = now.weekday()
-#         diasRestantes = 7 - weekDayNow
+class ProjectNextWeekListView(ListView):
+    model=Project
+    template_name="nucleo/ListNextWeek_list.html"
+    projects = Project.objects.all()    
+    # print(item[0].startDate.weekday())
+    @staticmethod
+    def get_next_week():
+        now = datetime.datetime.now()
+        # print(project.startDate.weekday())
+        weekDayNow = now.weekday()
+        diasRestantes = 7 - weekDayNow
         
-#         monday = weekDayNow + diasRestantes
-#         sunday = monday + 6
-#         return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
-      
-            
-            
+        monday = weekDayNow + diasRestantes
+        sunday = monday + 6
+        return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
     
-#     def get_context_data(self, **kwargs):
-#         now = datetime.datetime.now()
-#         context = super().get_context_data(**kwargs)
-#         context['projectsDates'] = self.get_next_week()
-#         return context
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['projectsDates'] = self.get_next_week()
+        return context

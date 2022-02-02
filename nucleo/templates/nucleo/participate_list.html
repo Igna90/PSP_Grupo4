@@ -7,7 +7,7 @@
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
-                  <th>Id</th>
+                  <th>Id Proyecto</th>
                   <th>Titulo</th>
                   <th>Descripcion</th>
                   <th>Nivel</th>
@@ -18,20 +18,28 @@
               </thead>
               <tbody>
                 {% for participate in participates %}
-                {% for project in projects %}
-                {% if project.id == participate.idProject.id %}
-                    <tr class="a">
-                      <td>{{ project.id }}</td>
-                      <td>{{ project.title }}</td>
-                      <td>{{ project.description }}</td>
-                      <td>{{ project.level }}</td>
-                      <td>{{ project.startDate }}</td>
-                      <td>{{ project.endDate }}</td>
-                      <td>{{ project.endReport }}</td>
+                {% if request.user.role_user == "Cliente" %}
+                <tr class="a">
+                      <td>{{ participate.idProject.id }}</td>
+                      <td>{{ participate.idProject.title }}</td>
+                      <td>{{ participate.idProject.description }}</td>
+                      <td>{{ participate.idProject.level }}</td>
+                      <td>{{ participate.idProject.startDate }}</td>
+                      <td>{{ participate.idProject.endDate }}</td>
+                      <td>{{ participate.idProject.endReport }}</td>
                     </tr>
-                    {% endif %}
-                    {% endfor %}
-                  {% endfor %}
+                  {% else %}
+                  <tr class="a">
+                    <td>{{ participate.id }}</td>
+                    <td>{{ participate.title }}</td>
+                    <td>{{ participate.description }}</td>
+                    <td>{{ participate.level }}</td>
+                    <td>{{ participate.startDate }}</td>
+                    <td>{{ participate.endDate }}</td>
+                    <td>{{ participate.endReport }}</td>
+                  </tr>
+                {% endif %}
+                {% endfor %}
                   </tbody>
                 </table>
                 <button class="btn btn-primary bot"><a class="bl" href="{% url 'listProjects' %}">Volver a proyectos</a></button>

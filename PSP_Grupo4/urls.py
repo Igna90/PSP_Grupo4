@@ -25,43 +25,50 @@ from django.conf.urls.static import static
 
 
 urlpatterns = [
+    
     path('admin/', admin.site.urls),
     path('accounts/',include('django.contrib.auth.urls')),
     path('',views.index, name="index"),
-    path('userList/',login_required(views.UserList), name='userList'),
     path('login/', views.login_view.loginUser, name='login'),
-    path('createClient/', views.FormularioClientView.index, name='createClient'),
-    path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
     path('editProfile/', login_required(views.profile), name='profile'),
     path('logout/', login_required(views.logout_request), name='logout'),
-    path('employeeList/', login_required(views.EmployeeList), name='employeeList'),
-    path('deleteClient/<int:pk>',login_required(views.UserDeleteView.as_view()), name='deleteUser'),
-    path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
+    
+    #ROL_ADMIN
+    path('userList/',login_required(views.UserList.as_view()), name='userList'),
     path('activeUser/<int:pk>', login_required(views.ActiveUser) , name='activeUser'),
     path('deactiveUser/<int:pk>', login_required(views.DeactiveUser) , name='deactiveUser'),
+    path('deleteClient/<int:pk>',login_required(views.UserDeleteView.as_view()), name='deleteUser'),
+    path('updateUser/<int:pk>', login_required(views.UserUpdateView.as_view()) , name='updateUser'),
+    path('employeeList/', login_required(views.EmployeeList.as_view()), name='employeeList'),
     path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
     path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
-    path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
-    path('deleteProjects/<int:pk>', login_required(views.ProjectDeleteView.as_view()), name='deleteProjects'),
-    path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
-    path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
-    path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
-    path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
-    path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
+    path('createClient/', views.FormularioClientView.index, name='createClient'),
+    path('guardarClient/', views.FormularioClientView.procesar_formulario, name='guardarClient'),
     path('categoryList/', login_required(views.CategoryListView.as_view()), name='categoryList'),
     path('createCategoria/',login_required(views.FormCreateCategoryView.index), name='createCategoria'),
     path('guardarCategoria/', login_required(views.FormCreateCategoryView.procesar_formulario), name='guardarCategoria'),
     path('updateCategory/<int:pk>', login_required(views.editCategory.as_view()) , name='updateCategory'),
     path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
-    path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
-    path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
+    path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
+    path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
+
+    #ROL_EMPLEADOS + ROL_CLIENTE
+    path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
     path('listParticipate/', login_required(views.ParticipateView.as_view()), name='listParticipate'),
+    
+    #ROL_EMPLEADOS
+    path('deleteProjects/<int:pk>', login_required(views.ProjectDeleteView.as_view()), name='deleteProjects'),
+    path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
+    path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
+    path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
     path('listEmployeeProjects/', login_required(views.EmployeeProjectView.as_view()), name='listEmployeeProjects'),
     path('clientProjectView/', login_required(views.ClientProjectView.as_view()), name='clientProjectView'),
     path('updateRol/<int:pk>', login_required(views.UpdateRolParticipate), name='updateRol'),
-    path('createdParticipate/<int:pk>', views.agregarParticipa, name='createdParticipate'),
-    path('listParticipate/', views.ParticipateView.as_view(), name='listParticipate'),
-    # path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
+
+    #ROL_CLIENTE
+    path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
+    path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
+    path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
    
 ]
 

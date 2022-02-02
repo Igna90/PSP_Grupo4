@@ -7,6 +7,7 @@
               <thead>
                 <tr>
                   <th>Id Cliente</th>
+                  <th>Usuario</th>
                   <th>DNI</th>
                   <th>Nombre</th>
                   <th>Apellidos</th>
@@ -21,6 +22,7 @@
                 {% for participate in participates %}
                 <tr class="a">
                   <td>{{ participate.idCliente.id }}</td>
+                  <td>{{ participate.idCliente.username }}</td>
                   <td>{{ participate.idCliente.dni }}</td>
                   <td>{{ participate.idCliente.name }}</td>
                   <td>{{ participate.idCliente.surname }}</td>
@@ -47,6 +49,7 @@
                 {% endfor %}
               </tbody>
             </table>
+            <button class="btn btn-primary bot"><a class="bl" href="{% url 'listEmployeeProjects' %}">Volver a proyectos</a></button>
         </div>
     </section>   
     {% endblock %}     

@@ -7,10 +7,7 @@ from multiprocessing import context
 from multiprocessing.connection import Client
 import os
 from re import template
-<<<<<<< HEAD
 
-=======
->>>>>>> 36b6291334e108c523fcee737863c63fc2238683
 from tkinter.tix import MAX, Select
 from unicodedata import name
 from django.shortcuts import redirect, render
@@ -269,11 +266,7 @@ class SignProject(HttpRequest):
 
 class ProjectListView(ListView):
     model=Project
-<<<<<<< HEAD
-    template_name="nucleo/project_list.html"
-=======
     template_name="nucleo/users/project_list.html"
->>>>>>> 36b6291334e108c523fcee737863c63fc2238683
     
     def get_queryset(self):
         query = self.request.GET.get('buscar')
@@ -351,8 +344,7 @@ class CategoryDeleteView(DeleteView):
 class ProjectNextWeekListView(ListView):
     model=Project
     template_name="nucleo/ListNextWeek_list.html"
-<<<<<<< HEAD
-
+      
     @staticmethod
     def get_next_week():
         now = datetime.datetime.now()
@@ -361,22 +353,7 @@ class ProjectNextWeekListView(ListView):
         monday = now + datetime.timedelta(diasRestantes)
         sunday = monday + datetime.timedelta(6)
         return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
-      
-=======
-    projects = Project.objects.all()    
-    # print(item[0].startDate.weekday())
-    @staticmethod
-    def get_next_week():
-        now = datetime.datetime.now()
-        # print(project.startDate.weekday())
-        weekDayNow = now.weekday()
-        diasRestantes = 7 - weekDayNow
-        
-        monday = weekDayNow + diasRestantes
-        sunday = monday + 6
-        return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
     
->>>>>>> 36b6291334e108c523fcee737863c63fc2238683
     def get_context_data(self, **kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)

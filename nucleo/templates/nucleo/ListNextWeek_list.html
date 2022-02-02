@@ -2,10 +2,10 @@
     {% block content %}
     <section id="auto">
         <div class="container">
+            <h2 class="ss">Proyectos de la próxima semana</h2>
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
-                  <th>Id</th>
                   <th>Titulo</th>
                   <th>Descripcion</th>
                   <th>Nivel</th>
@@ -15,21 +15,22 @@
                 </tr>
               </thead>
               <tbody>
-                {% for item in project_list %}
+                
+                {% for projectsDate in projectsDates %}
                     <tr class="a">
-                      <td>{{ item.id }}</td>
-                      <td>{{ item.title }}</td>
-                      <td>{{ item.description }}</td>
-                      <td>{{ item.level }}</td>
-                      <td>{{ item.startDate }}</td>
-                      <td>{{ item.endDate }}</td>
-                      <td>{{ item.endReport }}</td>
+                      <td>{{ projectsDate.title }}</td>
+                      <td>{{ projectsDate.description }}</td>
+                      <td>{{ projectsDate.level }}</td>
+                      <td>{{ projectsDate.startDate }}</td>
+                      <td>{{ projectsDate.endDate }}</td>
+                      <td>{{ projectsDate.endReport }}</td>
                     </tr>
 
                   {% endfor %}
+                
                   </tbody>
                 </table>
-                <button class="btn btn-primary bot"><a class="bl" href="{% url 'listProjects' %}">Volver a proyectos</a></button>
+                <button class="btn btn-primary bot"><a class="bl" href="{% url 'listProjects' %}">Inscribete</a></button>
         </div>
     </section>   
     {% endblock %}   

@@ -110,3 +110,5 @@ class ProjectForm(forms.ModelForm):
                    'idCategory' : forms.Select (attrs={'class':'formset-field', 'placeholder': ' '}),
                    'idEmployee': forms.TextInput (attrs={'class':'formset-field', 'placeholder': ' '}),
         }
+        
+        

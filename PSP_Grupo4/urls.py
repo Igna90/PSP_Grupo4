@@ -42,6 +42,7 @@ urlpatterns = [
     path('createEmployee/', login_required(views.FormularioEmployeeView.index), name='createEmployee'),
     path('guardarEmployee/', login_required(views.FormularioEmployeeView.procesar_formulario), name='guardarEmployee'),
     path('listProjects/', login_required(views.ProjectListView.as_view()), name='listProjects'),
+
     path('deleteProjects/<int:pk>', login_required(views.ProjectDeleteView.as_view()), name='deleteProjects'),
     path('updateProject/<int:pk>', login_required(views.ProjectUpdateView.as_view()) , name='updateProject'),
     path('createProject/', login_required(views.FormularioProjectView.index), name='createProject'),
@@ -56,8 +57,10 @@ urlpatterns = [
     path('deleteCategory/<int:pk>',login_required(views.CategoryDeleteView.as_view()), name='deleteCategory'),
     path('createdParticipate/<int:pk>', views.agregarParticipa, name='createdParticipate'),
     path('listParticipate/', views.ParticipateView.as_view(), name='listParticipate'),
-    # path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
-   
+    path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
+    path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
+    path('listParticipate/', login_required(views.ParticipateView.as_view()), name='listParticipate'),
+    path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
 ]
 
 if settings.DEBUG:

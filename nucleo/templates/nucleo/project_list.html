@@ -59,7 +59,6 @@
               </tbody>
             </table>
             <div class="row">
-              {% if request.user.role_user == 'Empleado' %}
               <div class="col-5">
                 {% if request.user.role_user == 'Empleado' %}
                 <button class="btn btn-primary bot"><a  class="bl" href="{% url 'createProject' %}">Crear Proyecto</a></button>

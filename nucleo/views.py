@@ -6,7 +6,7 @@ from multiprocessing import context
 from multiprocessing.connection import Client
 import os
 from re import template
-import this
+
 from tkinter.tix import MAX, Select
 from unicodedata import name
 from django.shortcuts import redirect, render
@@ -77,6 +77,10 @@ class FormularioProjectView(HttpRequest):
         projectForm = ProjectForm(request.POST)
         project = projectForm.save(commit=False)
         project.idEmployee = request.user
+        if project.endDate < project.startDate:
+            messages.error(request, "La fecha final de proyecto debe ser mayor a la de inicio")
+            return redirect(('createProject'))
+            
         
         if request.method =='POST' and  projectForm.is_valid():
             project.save()
@@ -254,7 +258,6 @@ class SignProject(HttpRequest):
 
 class ProjectListView(ListView):
     model=Project
-    second_model=Category
     template_name="nucleo/project_list.html"
     
     def get_queryset(self):
@@ -332,27 +335,21 @@ class CategoryDeleteView(DeleteView):
         return HttpResponseRedirect('/categoryList/')
 
 
-# class ProjectNextWeekListView(ListView):
-#     model=Project
-#     template_name="nucleo/ListNextWeek_list.html"
-#     projects = Project.objects.all()    
-#     # print(item[0].startDate.weekday())
-#     @staticmethod
-#     def get_next_week():
-#         now = datetime.datetime.now()
-#         # print(project.startDate.weekday())
-#         weekDayNow = now.weekday()
-#         diasRestantes = 7 - weekDayNow
-        
-#         monday = weekDayNow + diasRestantes
-#         sunday = monday + 6
-#         return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
+class ProjectNextWeekListView(ListView):
+    model=Project
+    template_name="nucleo/ListNextWeek_list.html"
+
+    @staticmethod
+    def get_next_week():
+        now = datetime.datetime.now()
+        weekDayNow = now.weekday()
+        diasRestantes = 6 - weekDayNow
+        monday = now + datetime.timedelta(diasRestantes)
+        sunday = monday + datetime.timedelta(6)
+        return Project.objects.filter(startDate__gt=monday, startDate__lt=sunday)
       
-            
-            
-    
-#     def get_context_data(self, **kwargs):
-#         now = datetime.datetime.now()
-#         context = super().get_context_data(**kwargs)
-#         context['projectsDates'] = self.get_next_week()
-#         return context
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['projectsDates'] = self.get_next_week()
+        return context

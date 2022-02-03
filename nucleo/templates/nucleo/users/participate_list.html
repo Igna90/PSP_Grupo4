@@ -20,7 +20,6 @@
                 {% for participate in participates %}
                 {% if request.user.role_user == "Cliente" %}
                 <tr class="a">
-                      <td>{{ participate.idProject.id }}</td>
                       <td>{{ participate.idProject.title }}</td>
                       <td>{{ participate.idProject.description }}</td>
                       <td>{{ participate.idProject.level }}</td>
@@ -30,7 +29,6 @@
                     </tr>
                   {% else %}
                   <tr class="a">
-                    <td>{{ participate.id }}</td>
                     <td>{{ participate.title }}</td>
                     <td>{{ participate.description }}</td>
                     <td>{{ participate.level }}</td>

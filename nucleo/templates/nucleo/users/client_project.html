@@ -6,7 +6,6 @@
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
-                  <th>Id Cliente</th>
                   <th>Usuario</th>
                   <th>DNI</th>
                   <th>Nombre</th>
@@ -21,7 +20,6 @@
               <tbody>
                 {% for participate in participates %}
                 <tr class="a">
-                  <td>{{ participate.idCliente.id }}</td>
                   <td>{{ participate.idCliente.username }}</td>
                   <td>{{ participate.idCliente.dni }}</td>
                   <td>{{ participate.idCliente.name }}</td>

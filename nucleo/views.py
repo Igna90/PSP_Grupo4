@@ -301,7 +301,7 @@ class ActiveUserView(UpdateView):
                 return render(self.request,"nucleo/admin/user_list.html",{'users':users})
         
 @method_decorator(is_not_admin,name="dispatch")
-# @method_decorator(is_active,name="dispatch")
+@method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"

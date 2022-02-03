@@ -7,7 +7,6 @@
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
-                  <th>Id</th>
                   <th>Nombre</th>
                   <th>Imagen</th>
                   <th></th>
@@ -17,7 +16,6 @@
               <tbody>
                 {% for item in category_list %}
                 <tr class="a">
-                  <td>{{ item.id }}</td>
                   <td>{{ item.name }}</td>
                   {% if item.image %}
                   <td>

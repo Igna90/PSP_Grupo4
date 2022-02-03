@@ -68,7 +68,6 @@ urlpatterns = [
     path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
     path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
     path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
-   
 ]
 
 if settings.DEBUG:

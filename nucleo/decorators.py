@@ -35,7 +35,7 @@ def is_not_admin(fun):
 
 def is_active(fun):
     def active_or_no(request,*args,**kwargs):
-        if request.user.active == False:
+        if request.user.role_user=="Cliente" and request.user.active == False :
             messages.success(request, "Lo sentimos, pero su usuario aún no está activado")
             return HttpResponseRedirect('/')
         return fun(request,*args,**kwargs)

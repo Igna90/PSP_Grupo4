@@ -30,8 +30,7 @@ from django.db.models import Q
 def index(request):
     return render(request, "nucleo/index.html")
 
-@method_decorator(is_admin,name="index")
-@method_decorator(is_admin,name="procesar_formulario")
+
 class FormularioClientView(HttpRequest):
     def index(request):
         userForm = UserForm()
@@ -47,12 +46,12 @@ class FormularioClientView(HttpRequest):
             return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})
 
-@method_decorator(is_admin,name="index")
-@method_decorator(is_admin,name="procesar_formulario")
 class FormularioEmployeeView(HttpRequest):
+    @is_admin
     def index(request):
         userForm = EmployeeForm()
         return render(request, "registration/create_emp.html", {"form":userForm})
+    @is_admin
     def procesar_formulario(request):
         userForm = EmployeeForm(request.POST)
         if request.method =='POST' and  userForm.is_valid():
@@ -62,13 +61,13 @@ class FormularioEmployeeView(HttpRequest):
             messages.success(request, "El usuario ha sido registrado correctamente")
             return redirect(('employeeList'))
         return render(request, "registration/create_emp.html", {"form":userForm})
-    
-@method_decorator(is_admin,name="index")
-@method_decorator(is_admin,name="procesar_formulario")
+
 class FormCreateCategoryView(HttpRequest):
+    @is_admin
     def index(request):
         catForm = CategoryForm()
         return render(request, "registration/create_cat.html", {"form":catForm})
+    @is_admin
     def procesar_formulario(request):
         catForm = CategoryForm(request.POST, request.FILES)
         if request.method =='POST' and  catForm.is_valid():
@@ -80,9 +79,11 @@ class FormCreateCategoryView(HttpRequest):
 # @method_decorator(is_employee,name="index")
 # @method_decorator(is_employee,name="procesar_formulario")
 class FormularioProjectView(HttpRequest):
+    @is_employee
     def index(request):
         projectForm = ProjectForm()
         return render(request, "nucleo/users/create_proj.html", {"form":projectForm})
+    @is_employee
     def procesar_formulario(request):
         now = datetime.date.today()
         projectForm = ProjectForm(request.POST)
@@ -250,9 +251,9 @@ class ParticipateView(ListView):
             context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id,idProject_id__in=project)
         return context
 
-
+@is_client
+@is_active
 def project_participate(request,pk):
-    if request.user.is_admin:
         projects = Project.objects.filter(pk=pk)
         isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
         if (isParticipates == False):
@@ -262,7 +263,9 @@ def project_participate(request,pk):
             return render(request,"nucleo/users/project_participate.html",context)
         else:
             return render(request,'nucleo/users/is_participate.html')
-    
+        
+@is_client
+@is_active
 def agregarParticipa(request,pk):
     if request.method=="POST":
         idProjecto=Project.objects.get(pk=pk)

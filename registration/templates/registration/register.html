@@ -3,6 +3,17 @@
     {% block content %}
             <section id="h">
                 <div class="hero-container" data-aos="fade-up">
+                    <div class="col-12">
+                        {% if messages %}
+                                {% for message in messages %}
+                                {% if message.tags == 'error' %}
+                                <strong><span>{{ message }}</span></strong>
+                                {% endif %}
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            <br>
+                            <br>
                     <div class="back">
                         <h2>Registrar Usuario</h2>
                         <form action="{% url 'guardarClient' %}" class="form" method="POST">

@@ -23,9 +23,9 @@ from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpd
 from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
-from django.views.generic import DeleteView,UpdateView, DetailView, ListView,TemplateView
-from django.db.models import Q
+from django.http import HttpRequest, HttpResponseRedirect
+from django.views.generic import DeleteView,UpdateView, ListView
+
 
 def index(request):
     return render(request, "nucleo/index.html")
@@ -38,13 +38,19 @@ class FormularioClientView(HttpRequest):
         return render(request, "registration/register.html", {"form":userForm})
     @is_admin
     def procesar_formulario(request):
+        now = datetime.date.today()
         userForm = UserForm(request.POST)
+        user = userForm.save(commit=False)
+        user.idEmployee = request.user
+        if user.birthDate >= now:
+            messages.error(request, "¿¿Viajas en el tiempo?? La fecha de nacimiento no puede ser posterior a hoy")
+            return redirect(('createClient'))
         if request.method =='POST' and  userForm.is_valid():
             now = datetime.datetime.now()    
             formulario = userForm.save()
             formulario.registerDate = now
             formulario.save()
-            messages.success(request, "El usuario ha sido registrado correctamente, vaya a acceder para comenzar")
+            messages.success(request, "El usuario ha sido registrado correctamente.")
             return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})
 
@@ -78,6 +84,7 @@ class FormCreateCategoryView(HttpRequest):
             return redirect(('categoryList'))
         return render(request, "registration/create_cat.html", {"form":catForm})
     
+
 class FormularioProjectView(HttpRequest):
     @is_employee
     def index(request):
@@ -85,14 +92,19 @@ class FormularioProjectView(HttpRequest):
         return render(request, "nucleo/users/create_proj.html", {"form":projectForm})
     @is_employee
     def procesar_formulario(request):
+        now = datetime.date.today()
         projectForm = ProjectForm(request.POST)
         project = projectForm.save(commit=False)
         project.idEmployee = request.user
         if project.endDate < project.startDate:
-            messages.error(request, "La fecha final de proyecto debe ser mayor a la de inicio")
+            messages.error(request, "La fecha de finalización del proyecto debe ser mayor a la de inicio")
+            return redirect(('createProject'))
+        if project.startDate <= now:
+            messages.error(request, "La fecha de comienzo del proyecto debe ser posterior a hoy")
             return redirect(('createProject'))
         
         if request.method =='POST' and  projectForm.is_valid():
+            
             project.save()
             messages.success(request, "El proyecto se ha creado correctamente")
             return redirect(('listProjects'))
@@ -289,7 +301,7 @@ class ActiveUserView(UpdateView):
                 return render(self.request,"nucleo/admin/user_list.html",{'users':users})
         
 @method_decorator(is_not_admin,name="dispatch")
-@method_decorator(is_active,name="dispatch")
+# @method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"

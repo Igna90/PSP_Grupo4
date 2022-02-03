@@ -23,9 +23,9 @@ from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpd
 from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponseRedirect, JsonResponse, request
-from django.views.generic import DeleteView,UpdateView, DetailView, ListView,TemplateView
-from django.db.models import Q
+from django.http import HttpRequest, HttpResponseRedirect
+from django.views.generic import DeleteView,UpdateView, ListView
+
 
 def index(request):
     return render(request, "nucleo/index.html")
@@ -35,14 +35,21 @@ class FormularioClientView(HttpRequest):
     def index(request):
         userForm = UserForm()
         return render(request, "registration/register.html", {"form":userForm})
+    @is_admin
     def procesar_formulario(request):
+        now = datetime.date.today()
         userForm = UserForm(request.POST)
+        user = userForm.save(commit=False)
+        user.idEmployee = request.user
+        if user.birthDate >= now:
+            messages.error(request, "¿¿Viajas en el tiempo?? La fecha de nacimiento no puede ser posterior a hoy")
+            return redirect(('createClient'))
         if request.method =='POST' and  userForm.is_valid():
             now = datetime.datetime.now()    
             formulario = userForm.save()
             formulario.registerDate = now
             formulario.save()
-            messages.success(request, "El usuario ha sido registrado correctamente, vaya a acceder para comenzar")
+            messages.success(request, "El usuario ha sido registrado correctamente.")
             return redirect(('userList'))
         return render(request, "registration/register.html", {"form":userForm})
 
@@ -76,8 +83,7 @@ class FormCreateCategoryView(HttpRequest):
             return redirect(('categoryList'))
         return render(request, "registration/create_cat.html", {"form":catForm})
     
-# @method_decorator(is_employee,name="index")
-# @method_decorator(is_employee,name="procesar_formulario")
+
 class FormularioProjectView(HttpRequest):
     @is_employee
     def index(request):

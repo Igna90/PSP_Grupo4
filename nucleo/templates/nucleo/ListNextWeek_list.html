@@ -12,6 +12,7 @@
                   <th>Fecha de Inicio</th>
                   <th>Fecha de Fin</th>
                   <th>Informe</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -23,12 +24,13 @@
                       <td>{{ projectsDate.startDate }}</td>
                       <td>{{ projectsDate.endDate }}</td>
                       <td>{{ projectsDate.endReport }}</td>
+                      <td>
+                          <button type ="submit" class="btn btn-primary bot"><a class="bl" href="{% url 'projectParticipate' projectsDate.id %}">Inscribirse</a></button>
+                      </td>
                     </tr>
                   {% endfor %}
-                
                   </tbody>
                 </table>
-                <button class="btn btn-primary bot"><a class="bl" href="{% url 'listProjects' %}">Inscribete</a></button>
         </div>
     </section>   
     {% endblock %}   

@@ -65,10 +65,10 @@ urlpatterns = [
     path('clientProjectView/', login_required(views.ClientProjectView.as_view()), name='clientProjectView'),
 
     #ROL_CLIENTE
-    path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
+    # path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
     path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
     path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
-   
+    path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
 ]
 
 if settings.DEBUG:

@@ -238,9 +238,7 @@ class ParticipateView(ListView):
             context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id,idProject_id__in=project)
         return context
 
-
 def project_participate(request,pk):
-    if request.user.is_admin:
         projects = Project.objects.filter(pk=pk)
         isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
         if (isParticipates == False):
@@ -279,7 +277,6 @@ class ActiveUserView(UpdateView):
                 return render(self.request,"nucleo/admin/user_list.html",{'users':users})
         
 @method_decorator(is_not_admin,name="dispatch")
-@method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"
@@ -295,6 +292,8 @@ class ProjectListView(ListView):
     def get_context_data(self, **kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
+        projectsDates = Project.objects.filter(startDate__gt=now)
+        context['projects'] = Project.objects.exclude(pk__in=projectsDates)
         context['projectsDates'] = Project.objects.filter(startDate__gt=now)
         context['categorys'] = Category.objects.all()
         return context

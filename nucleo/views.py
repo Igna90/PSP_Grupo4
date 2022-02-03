@@ -32,9 +32,11 @@ def index(request):
 
 
 class FormularioClientView(HttpRequest):
+    @is_admin
     def index(request):
         userForm = UserForm()
         return render(request, "registration/register.html", {"form":userForm})
+    @is_admin
     def procesar_formulario(request):
         userForm = UserForm(request.POST)
         if request.method =='POST' and  userForm.is_valid():

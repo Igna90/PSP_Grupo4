@@ -7,7 +7,7 @@
             <table id="tt" class="table table-hover">
               <thead>
                 <tr>
-                  <th>Id</th>
+                  <th>Nombre de Usuario</th>
                   <th>DNI</th>
                   <th>Nombre</th>
                   <th>Apellidos</th>
@@ -22,7 +22,7 @@
               <tbody>
                 {% for user in users %}
                 <tr class="a">
-                  <td>{{ user.id }}</td>
+                  <td>{{ user.username }}</td>
                   <td>{{ user.dni }}</td>
                   <td>{{ user.name }}</td>
                   <td >{{ user.surname }}</td>

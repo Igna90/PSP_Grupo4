@@ -22,7 +22,7 @@ class UserForm(UserCreationForm):
                    'name': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your name'}),
                    'surname': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your surname'}),
                    'address': forms.TextInput (attrs={'class':'formset-field', 'placeholder': 'Write your address'}),
-                   'birthDate': forms.DateInput (attrs={'class':'formset-field', 'placeholder': 'Write your birthdate'}),
+                   'birthDate': forms.DateInput (attrs={'type':'date', 'placeholder': 'Write your birthdate'}),
                    'password': forms.PasswordInput (render_value=True,attrs={'placeholder': 'Write your password'}),
         }
         

@@ -47,9 +47,11 @@ class FormularioClientView(HttpRequest):
         return render(request, "registration/register.html", {"form":userForm})
 
 class FormularioEmployeeView(HttpRequest):
+    @is_admin
     def index(request):
         userForm = EmployeeForm()
         return render(request, "registration/create_emp.html", {"form":userForm})
+    @is_admin
     def procesar_formulario(request):
         userForm = EmployeeForm(request.POST)
         if request.method =='POST' and  userForm.is_valid():
@@ -61,9 +63,11 @@ class FormularioEmployeeView(HttpRequest):
         return render(request, "registration/create_emp.html", {"form":userForm})
 
 class FormCreateCategoryView(HttpRequest):
+    @is_admin
     def index(request):
         catForm = CategoryForm()
         return render(request, "registration/create_cat.html", {"form":catForm})
+    @is_admin
     def procesar_formulario(request):
         catForm = CategoryForm(request.POST, request.FILES)
         if request.method =='POST' and  catForm.is_valid():
@@ -73,9 +77,11 @@ class FormCreateCategoryView(HttpRequest):
         return render(request, "registration/create_cat.html", {"form":catForm})
     
 class FormularioProjectView(HttpRequest):
+    @is_employee
     def index(request):
         projectForm = ProjectForm()
         return render(request, "nucleo/users/create_proj.html", {"form":projectForm})
+    @is_employee
     def procesar_formulario(request):
         projectForm = ProjectForm(request.POST)
         project = projectForm.save(commit=False)
@@ -238,6 +244,8 @@ class ParticipateView(ListView):
             context['participates'] = Participate.objects.filter(idCliente_id = self.request.user.id,idProject_id__in=project)
         return context
 
+@is_client
+@is_active
 def project_participate(request,pk):
         projects = Project.objects.filter(pk=pk)
         isParticipates = Participate.objects.filter(idProject_id=pk).filter(idCliente_id=request.user.id).exists()
@@ -248,7 +256,9 @@ def project_participate(request,pk):
             return render(request,"nucleo/users/project_participate.html",context)
         else:
             return render(request,'nucleo/users/is_participate.html')
-    
+        
+@is_client
+@is_active
 def agregarParticipa(request,pk):
     if request.method=="POST":
         idProjecto=Project.objects.get(pk=pk)
@@ -277,6 +287,7 @@ class ActiveUserView(UpdateView):
                 return render(self.request,"nucleo/admin/user_list.html",{'users':users})
         
 @method_decorator(is_not_admin,name="dispatch")
+@method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"
@@ -292,8 +303,6 @@ class ProjectListView(ListView):
     def get_context_data(self, **kwargs):
         now = datetime.datetime.now()
         context = super().get_context_data(**kwargs)
-        projectsDates = Project.objects.filter(startDate__gt=now)
-        context['projects'] = Project.objects.exclude(pk__in=projectsDates)
         context['projectsDates'] = Project.objects.filter(startDate__gt=now)
         context['categorys'] = Category.objects.all()
         return context

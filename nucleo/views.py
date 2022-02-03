@@ -32,11 +32,9 @@ def index(request):
 
 
 class FormularioClientView(HttpRequest):
-    @is_admin
     def index(request):
         userForm = UserForm()
         return render(request, "registration/register.html", {"form":userForm})
-    @is_admin
     def procesar_formulario(request):
         now = datetime.date.today()
         userForm = UserForm(request.POST)
@@ -99,9 +97,9 @@ class FormularioProjectView(HttpRequest):
         if project.endDate < project.startDate:
             messages.error(request, "La fecha de finalización del proyecto debe ser mayor a la de inicio")
             return redirect(('createProject'))
-        if project.startDate <= now:
-            messages.error(request, "La fecha de comienzo del proyecto debe ser posterior a hoy")
-            return redirect(('createProject'))
+        # if project.startDate >= now:
+        #     messages.error(request, "La fecha de comienzo del proyecto debe ser posterior a hoy")
+        #     return redirect(('createProject'))
         
         if request.method =='POST' and  projectForm.is_valid():
             

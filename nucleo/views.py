@@ -42,7 +42,7 @@ class FormularioClientView(HttpRequest):
         user = userForm.save(commit=False)
         user.idEmployee = request.user
         if user.birthDate >= now:
-            messages.error(request, "¿¿Viajas en el tiempo?? La fecha de nacimiento no puede ser posterior a hoy")
+            messages.error(request, "La fecha de nacimiento no puede ser posterior a hoy")
             return redirect(('createClient'))
         if request.method =='POST' and  userForm.is_valid():
             now = datetime.datetime.now()    
@@ -127,6 +127,7 @@ class login_view(HttpRequest):
 def profile(request):
     if request.method=="POST":
         form = UserUpdateForm(request.POST, instance=request.user)
+        
         if form.is_valid():
             form.save()
             messages.success(request, "Tu usuario ha sido editado con exito, por seguridad necesitas volver a loguearte.")

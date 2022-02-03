@@ -97,9 +97,9 @@ class FormularioProjectView(HttpRequest):
         if project.endDate < project.startDate:
             messages.error(request, "La fecha de finalización del proyecto debe ser mayor a la de inicio")
             return redirect(('createProject'))
-        # if project.startDate >= now:
-        #     messages.error(request, "La fecha de comienzo del proyecto debe ser posterior a hoy")
-        #     return redirect(('createProject'))
+        if project.startDate <= now:
+            messages.error(request, "La fecha de comienzo del proyecto debe ser posterior a hoy")
+            return redirect(('createProject'))
         
         if request.method =='POST' and  projectForm.is_valid():
             

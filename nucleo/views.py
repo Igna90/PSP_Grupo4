@@ -77,21 +77,26 @@ class FormCreateCategoryView(HttpRequest):
             return redirect(('categoryList'))
         return render(request, "registration/create_cat.html", {"form":catForm})
     
-@method_decorator(is_employee,name="index")
-@method_decorator(is_employee,name="procesar_formulario")
+# @method_decorator(is_employee,name="index")
+# @method_decorator(is_employee,name="procesar_formulario")
 class FormularioProjectView(HttpRequest):
     def index(request):
         projectForm = ProjectForm()
         return render(request, "nucleo/users/create_proj.html", {"form":projectForm})
     def procesar_formulario(request):
+        now = datetime.date.today()
         projectForm = ProjectForm(request.POST)
         project = projectForm.save(commit=False)
         project.idEmployee = request.user
         if project.endDate < project.startDate:
-            messages.error(request, "La fecha final de proyecto debe ser mayor a la de inicio")
+            messages.error(request, "La fecha de finalización del proyecto debe ser mayor a la de inicio")
+            return redirect(('createProject'))
+        if project.startDate <= now:
+            messages.error(request, "La fecha de comienzo del proyecto debe ser posterior a hoy")
             return redirect(('createProject'))
         
         if request.method =='POST' and  projectForm.is_valid():
+            
             project.save()
             messages.success(request, "El proyecto se ha creado correctamente")
             return redirect(('listProjects'))
@@ -286,7 +291,7 @@ class ActiveUserView(UpdateView):
                 return render(self.request,"nucleo/admin/user_list.html",{'users':users})
         
 @method_decorator(is_not_admin,name="dispatch")
-@method_decorator(is_active,name="dispatch")
+# @method_decorator(is_active,name="dispatch")
 class ProjectListView(ListView):
     model=Project
     template_name="nucleo/users/project_list.html"

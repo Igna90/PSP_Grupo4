@@ -373,7 +373,48 @@ class ListProjctView(ListView):
             idProject = self.request.GET.get('idProject')
             context['projects'] = Project.objects.filter(id = idProject)
             return context
-     
+
+@method_decorator(is_client,name="dispatch")
+class infoPDFView(ListView):
+    model = Participate
+    second_model = User
+    template_name="nucleo/users/my_info.html"
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        idClient = self.request.user.id
+        isParticipate = Participate.objects.filter(idCliente_id = idClient).exists()
+        if( isParticipate == True ):
+            context['users'] = User.objects.filter(id=idClient)
+            context['participates'] = Participate.objects.filter(idCliente_id = idClient)
+            return context
+        else:
+            context['participates'] = User.objects.filter(id = idClient)
+            return context
+        
+@method_decorator(is_client,name="dispatch")
+class infoPDFFilterView(ListView):
+    model = Participate
+    second_model = User
+    template_name="nucleo/users/my_info.html"
+        
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        idClient = self.request.user.id
+        stDate = self.request.GET.get('stDate')
+        ndDate = self.request.GET.get('ndDate')
+        projects = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate).exists()
+        if( projects == True ):
+            context['users'] = User.objects.filter(id=idClient)
+            projectsList = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate)
+            context['participates'] = Participate.objects.filter(idCliente_id = idClient).filter(idProject_id__in = projectsList)
+            return context
+        else:
+            context['users'] = User.objects.filter(id=idClient)
+            message = "No existe ningun proyecto en las fechas indicadas"
+            context['messages'] = message
+            return context
+         
 @method_decorator(is_admin,name="dispatch")
 class CategoryListView(ListView):
     model=Category

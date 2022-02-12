@@ -1,0 +1,92 @@
+{% extends 'nucleo/index.html' %}
+    {% block content %}
+    <section id="auto">
+        <div class="container">
+            <h2 class="ss">Perfil Cliente: </h2>
+            <table id="tt" class="table table-hover">
+              <thead>
+                <tr>
+                  <th>DNI</th>
+                  <th>Nombre de usuario</th>
+                  <th>Nombre</th>
+                  <th>Apellidos</th>
+                  <th>Dirección</th>
+                  <th>Fecha de Nacimiento</th>
+                  <th>Fecha de Registro</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for user in users %}
+                <tr class="a">
+                  <td>{{ user.dni }}</td>
+                  <td>{{ user.username }}</td>
+                  <td>{{ user.name }}</td>
+                  <td>{{ user.surname }}</td>
+                  <td >{{ user.address }}</td>
+                  <td>{{ user.birthDate }}</td>
+                  <td>{{ user.registerDate }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+            <h2 class="ss">Proyectos en los que ha participado: </h2>
+            <div class="row">
+                <div class="col-12">
+                    <h5>Filtrar proyectos por fecha de inicio:</h5>
+                </div>
+                <form method="GET" action="{% url 'infoPDFFilter' %}">
+                    {% csrf_token %}
+                    <div class="col-12">
+                        <label>Buscar entre:</label>
+                    </div>
+                    <div class="row">
+                        <div class="col-4">
+                            <label>Fecha inicial:</label>
+                            <input type="date" name="stDate"/>
+                        </div>
+                        <div class="col-4">
+                            <label>Fecha final:</label>
+                            <input type="date" name="ndDate"/>
+                        </div>
+                        <div class="col-4">
+                            <button class="btn btn-primary bot" type="submit">Filtrar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            {% if participates %}
+            
+            <table id="tt" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th>Titulo</th>
+                    <th>Descripción</th>
+                    <th>Nivel</th>
+                    <th>Fecha de inicio</th>
+                    <th>Fecha de fin</th>
+                    <th>Informe final</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for participate in participates %}
+                  <tr class="a">
+                    <td>{{ participate.idProject.title }}</td>
+                    <td>{{ participate.idProject.description }}</td>
+                    <td>{{ participate.idProject.level }}</td>
+                    <td>{{ participate.idProject.startDate }}</td>
+                    <td >{{ participate.idProject.endDate }}</td>
+                    <td>{{ participate.idProject.endReport }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+              {% endif %}
+              {%if messages %}
+              {% for message in messages %}
+                <strong><span>{{ message }}</span></strong>
+              {% endfor %}
+              {% endif %}
+            <button class="btn btn-primary bot"><a class="bl" href="{% url 'infoPDF' %}">Generar PDF</a></button>
+        </div>
+    </section>   
+    {% endblock %}  

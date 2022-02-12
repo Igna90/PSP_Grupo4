@@ -349,7 +349,31 @@ class ClientProjectView(ListView):
         idProject = self.request.GET.get('idProject')
         context['participates'] = Participate.objects.filter(idProject_id = idProject)
         return context 
+    
+@method_decorator(is_employee,name="dispatch")
+class SearchClientView(ListView):
+    model = Participate
+    template_name="nucleo/users/search_client.html"
+    
+    def get_context_data(self, **kwargs):
+        if self.request.method == "GET":
+            context = super().get_context_data(**kwargs)
+            role = self.request.GET.get('rol')
+            context['participates'] = Participate.objects.filter(rol = role)
+            return context
 
+@method_decorator(is_employee,name="dispatch")
+class ListProjctView(ListView):
+    model = Project
+    template_name="nucleo/users/this_project.html"
+    
+    def get_context_data(self, **kwargs):
+        if self.request.method == "GET":
+            context = super().get_context_data(**kwargs)
+            idProject = self.request.GET.get('idProject')
+            context['projects'] = Project.objects.filter(id = idProject)
+            return context
+     
 @method_decorator(is_admin,name="dispatch")
 class CategoryListView(ListView):
     model=Category

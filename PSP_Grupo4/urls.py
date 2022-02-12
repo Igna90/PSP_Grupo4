@@ -63,6 +63,8 @@ urlpatterns = [
     path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
     path('listEmployeeProjects/', login_required(views.EmployeeProjectView.as_view()), name='listEmployeeProjects'),
     path('clientProjectView/', login_required(views.ClientProjectView.as_view()), name='clientProjectView'),
+    path('searchClient/', login_required(views.SearchClientView.as_view()), name='searchClient'),
+    path('listThisProject/', login_required(views.ListProjctView.as_view()), name='listThisProject'),
 
     #ROL_CLIENTE
     path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),

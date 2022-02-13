@@ -32,11 +32,9 @@ def index(request):
 
 
 class FormularioClientView(HttpRequest):
-    @is_admin
     def index(request):
         userForm = UserForm()
         return render(request, "registration/register.html", {"form":userForm})
-    @is_admin
     def procesar_formulario(request):
         now = datetime.date.today()
         userForm = UserForm(request.POST)

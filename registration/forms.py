@@ -112,3 +112,14 @@ class ProjectForm(forms.ModelForm):
         }
         
         
+class ProjectEndDateForm(forms.ModelForm):
+    class Meta:
+        model = Project
+        fields = ['endReport','endDate']
+        exclude = ('endDate',)
+        labels = {
+            'endReport': 'Informe final',
+        }
+        widgets = { 
+                   'endReport': forms.Textarea (attrs={'class':'formset-field', 'placeholder': ' '}),
+        }

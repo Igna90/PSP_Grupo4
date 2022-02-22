@@ -1,30 +1,42 @@
-from audioop import reverse
-from contextlib import nullcontext
 import datetime
-from http.client import HTTPResponse
-from msilib.schema import ListView
-from multiprocessing import context
-from multiprocessing.connection import Client
-import os
-from django.utils.decorators import method_decorator
-from re import template
 
-from tkinter.tix import MAX, Select
-from unicodedata import name
+from msilib.schema import ListView
+
+
+from django.utils.decorators import method_decorator
+
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from nucleo.decorators import is_active, is_admin, is_client, is_employee, is_not_admin
+from nucleo.decorators import is_active, is_admin, is_client, is_current_employee, is_employee, is_not_admin
 from nucleo.models import Category, Participate, Project, User
 from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpdateForm,CategoryForm
 from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import DeleteView,UpdateView, ListView
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ParseError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from django.http import Http404
+from nucleo.serializers import ParticipateSerializers, ProjectsSerializers, UserSerializers
+
+from django.conf import settings
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from django.views.generic import View
+from reportlab.platypus import Table,TableStyle
+from reportlab.lib.units import cm
+from reportlab.lib import colors
 
 
 def index(request):
@@ -380,6 +392,7 @@ class CategoryDeleteView(DeleteView):
         try:
             self.object.delete()
         except Exception as e:
+            
             data['error'] = str(e)
         return HttpResponseRedirect('/categoryList/')
 
@@ -403,3 +416,159 @@ class ProjectNextWeekListView(ListView):
         context = super().get_context_data(**kwargs)
         context['projectsDates'] = self.get_next_week()
         return context
+    
+@method_decorator(is_employee,name="dispatch")
+class EmployeeCurrentProjectView(ListView):
+    model = Project
+    template_name="nucleo/users/employee_current_projects.html"
+            
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['projects'] = Project.objects.filter(idEmployee_id=self.request.user.pk,endDate__gt=now)
+        return context
+    
+@method_decorator(is_employee,name="dispatch")
+@method_decorator(is_current_employee,name="dispatch")           
+class EmployeeUpdateEndDate(UpdateView):
+        model= Project
+        template_name='nucleo/users/updateEndReport.html'
+        fields = ['endReport']
+   
+        def post(self, request, **kwargs):
+            if self.request.method == "POST":
+                projectId = self.request.POST.get('idProject')
+                now = datetime.datetime.now()
+                Project.objects.filter(id = projectId).update(endDate = now)
+                
+            return super(EmployeeUpdateEndDate, self).post(request, **kwargs)
+        
+        def dispatch(self, request, *args, **kwargs):
+            self.object = self.get_object()
+            return super().dispatch(request, *args, **kwargs)
+        
+        
+        def get_success_url(self):
+            return '/listEmployeeCurrentProjects/'
+
+
+# Vistas para la api
+
+class User_APIView(APIView):
+    # permission_classes=[IsAuthenticated]
+    
+    def get(self,request,format=None,*args,**kwargs):
+        user = User.objects.filter(role_user='Cliente')
+        serializer = UserSerializers(user,many=True)
+        return Response(serializer.data)
+    
+    # def post(self, request, format=None):
+    #     serializer = UserSerializers(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class Participate_APIView(APIView):
+    # permission_classes=[IsAuthenticated]
+    
+    def get(self,request,format=None,*args,**kwargs):
+        participate = Participate.objects.all()
+        serializer = ParticipateSerializers(participate,many=True)
+        return Response(serializer.data)
+
+class Project_APIView(APIView):
+    # permission_classes=[IsAuthenticated]
+    
+    def get(self,request,format=None,*args,**kwargs):
+        proj = Project.objects.all()
+        serializer = ProjectsSerializers(proj,many=True)
+        return Response(serializer.data)
+    
+    
+class TestView(APIView):
+    
+    def get(self,request, format=None):
+        return Response({'detail':"GET Response"})
+    
+    def post(self,request,format=None):
+        try:
+            data=request.data
+        except ParseError as error:
+            return Response(
+                'Invalid JSON - {0}'.format(error.detail),
+                status= status.HTTP_400_BAD_REQUEST
+            )
+        if "user" not in data or "password" not in data:
+            return Response(
+                'Wrong credentials',
+                status = status.HTTP_401_UNAUTHORIZED
+            )
+            
+        user = User.objects.get(username=data["user"])
+        if not user:
+            return Response(
+                'No default user,please create one',
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        token = Token.objects.get_or_create(user=user)
+        return Response({'details':'POST answer','token':token[0].key})
+    
+#pruebas pdf
+
+class ReportePersonasPDF(View):  
+    
+    def cabecera(self,pdf):
+        #Utilizamos el archivo logo_django.png que está guardado en la carpeta media/imagenes
+        archivo_imagen = settings.MEDIA_ROOT+'assets/img/section-title-bg.png'
+        #Definimos el tamaño de la imagen a cargar y las coordenadas correspondientes
+        pdf.drawImage(archivo_imagen, 40, 750, 120, 90,preserveAspectRatio=True)
+        pdf.setFont("Helvetica",16)
+        pdf.drawString(230,790, u"Cliente")
+        pdf.setFont("Helvetica",14)
+        pdf.drawString(200, 770, u"Listado de proyectos")  
+        
+    def tabla(self,pdf,y):
+        #Creamos una tupla de encabezados para neustra tabla
+        encabezados = [('DNI', 'Nombre', 'Apellidos', 'fechaNacimiento')]
+        #Creamos una lista de tuplas que van a contener a las personas
+        detalles = [(cliente.dni, cliente.name, cliente.surname, cliente.birthDate, cliente.address) for cliente in User.objects.filter(role_user='Cliente')]
+        #Establecemos el tamaño de cada una de las columnas de la tabla
+        detalle_orden = Table(encabezados + detalles, colWidths=[2 * cm, 5 * cm, 5 * cm, 5 * cm])
+        #Aplicamos estilos a las celdas de la tabla
+        detalle_orden.setStyle(TableStyle(
+            [
+                #La primera fila(encabezados) va a estar centrada
+                ('ALIGN',(0,0),(3,0),'CENTER'),
+                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
+                ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                #El tamaño de las letras de cada una de las celdas será de 10
+                ('FONTSIZE', (0, 0), (-1, -1), 2),
+            ]
+        ))
+        #Establecemos el tamaño de la hoja que ocupará la tabla 
+        detalle_orden.wrapOn(pdf, 800, 600)
+        #Definimos la coordenada donde se dibujará la tabla
+        detalle_orden.drawOn(pdf, 60,y)
+            
+        
+    def get(self, request, *args, **kwargs):
+        #Indicamos el tipo de contenido a devolver, en este caso un pdf
+        response = HttpResponse(content_type='application/pdf')
+        #La clase io.BytesIO permite tratar un array de bytes como un fichero binario, se utiliza como almacenamiento temporal
+        buffer = BytesIO()
+        #Canvas nos permite hacer el reporte con coordenadas X y Y
+        pdf = canvas.Canvas(buffer)
+        #Llamo al método cabecera donde están definidos los datos que aparecen en la cabecera del reporte.
+        self.cabecera(pdf)
+        y = 600
+        self.tabla(pdf, y)
+        #Con show page hacemos un corte de página para pasar a la siguiente
+        pdf.showPage()
+        pdf.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+    

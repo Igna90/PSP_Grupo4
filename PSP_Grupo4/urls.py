@@ -22,6 +22,7 @@ from django.contrib.auth.decorators import login_required
 from nucleo import views
 from django.conf import settings
 from django.conf.urls.static import static
+from nucleo.views import Participate_APIView, Project_APIView, ReportePersonasPDF, TestView, User_APIView
 
 
 urlpatterns = [
@@ -63,11 +64,21 @@ urlpatterns = [
     path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
     path('listEmployeeProjects/', login_required(views.EmployeeProjectView.as_view()), name='listEmployeeProjects'),
     path('clientProjectView/', login_required(views.ClientProjectView.as_view()), name='clientProjectView'),
+    path('listEmployeeCurrentProjects/', login_required(views.EmployeeCurrentProjectView.as_view()), name='listEmployeeCurrentProjects'),
+    path('endProjects/<int:pk>', login_required(views.EmployeeUpdateEndDate.as_view()), name='endProjects'),
 
     #ROL_CLIENTE
     path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
     path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
     path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
+    #API
+    path('api/users/',User_APIView.as_view()),
+    path('api/participates/',Participate_APIView.as_view()),
+    path('api/projects/',Project_APIView.as_view()),
+    # path('api/employees/<int:pk>',Employees_APIView_Detail.as_view()),  
+    path('api/token/',TestView.as_view()), 
+    #PDF
+    path('reporte_personas_pdf/',(ReportePersonasPDF.as_view()), name="reporte_personas_pdf"),
 ]
 
 if settings.DEBUG:

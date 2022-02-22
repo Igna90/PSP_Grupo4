@@ -56,7 +56,11 @@
         {% if message.tags == 'success' %}
         <strong><span>{{ message }}</span></strong>
         {% endif %}
+        {% if message.tags == 'error' %}
+        <strong><span>{{ message }}</span></strong>
+        {% endif %}
         {% endfor %}
+        
         {% endif %}
       </div>
 
@@ -73,6 +77,9 @@
               <li><a href="{% url 'listProjects' %}">Ver proyectos</a></li>
               {% if request.user.role_user == "Empleado" %}
               <li><a href="{% url 'listEmployeeProjects' %}">Proyectos Propios</a></li>
+              {% endif %}
+              {% if request.user.role_user == "Empleado" %}
+              <li><a href="{% url 'listEmployeeCurrentProjects' %}">Finalizar proyectos</a></li>
               {% endif %}
               {% if request.user.role_user == "Cliente" %}
               <li><a href="{% url 'listProjectsNextWeek' %}">Prox Semana</a></li>

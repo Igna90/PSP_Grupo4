@@ -1,7 +1,7 @@
 from django import forms
 from django.db import models
 from django.db.models.deletion import DO_NOTHING
-import datetime
+
 from django.contrib.auth.models import AbstractUser
 from django.forms import ValidationError
 from django.utils.translation import gettext_lazy as _

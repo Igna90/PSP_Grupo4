@@ -518,6 +518,8 @@ class generatePDFView(View):
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
         if str(stDate) == "":
+                pdf.setFont("Courier-Bold",16)
+                pdf.drawString(70, 550, u" PROYECTOS DEL CLIENTE ")
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
                 detalles = [(Paragraph(str(cliente.idProject.title), styleN),Paragraph(str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
                 table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
@@ -531,7 +533,23 @@ class generatePDFView(View):
                     ))
                 table.wrapOn(pdf, 800, 600)
                 table.drawOn(pdf, 60,y)
-
+        else:
+                pdf.setFont("Courier-Bold",16)
+                pdf.drawString(70, 515, u" PROYECTOS DEL CLIENTE FILTRADOS POR FECHA")
+                encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
+                detalles = [(Paragraph(str(project.title), styleN),Paragraph(str(project.description), styleN), Paragraph(str(project.level), styleN),Paragraph(str(project.startDate), styleN),Paragraph(str(project.endDate), styleN),Paragraph(str(project.endReport), styleN)) for project in Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)]
+                table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                table.setStyle(TableStyle([
+                    ('ALIGN',(0,0),(3,0),'CENTER'),
+                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                    ('FONTSIZE', (0, 0), (-1, -1), 10),
+                    ]
+                    ))
+                table.wrapOn(pdf, 800, 600)
+                table.drawOn(pdf, 60,y)
+            
             
 
     def get(self,request,*args,**kwargs):

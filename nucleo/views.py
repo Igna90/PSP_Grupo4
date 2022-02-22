@@ -518,39 +518,19 @@ class generatePDFView(View):
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
         if str(stDate) == "":
-            for cliente in Participate.objects.filter(idCliente = self.request.user.id):
-                
-                htitle= Paragraph('''<b>titulo</b>''', styleBH)
-                hdescription = Paragraph('''<b>descripcion</b>''', styleBH)
-                hlevel = Paragraph('''<b>nivel</b>''', styleBH)
-                hstartDate = Paragraph('''<b>Fecha de inicio</b>''', styleBH)
-                hendDate = Paragraph('''<b>Fecha de fin</b>''', styleBH)
-                hendReport = Paragraph('''<b>Informe final</b>''', styleBH)
-                
-                title = Paragraph(str(cliente.idProject.title), styleN)
-                description = Paragraph(str(cliente.idProject.description), styleN)
-                level = Paragraph(str(cliente.idProject.level), styleN)
-                startDate = Paragraph(str(cliente.idProject.startDate), styleN)
-                endDate = Paragraph(str(cliente.idProject.endDate), styleN)
-                endReport = Paragraph(str(cliente.idProject.endReport), styleN)
-                data = [[htitle,hdescription,hlevel,hstartDate,hendDate,hendReport],[title,description,level,startDate,endDate,endReport]] 
-            table = Table(data, rowHeights=50,colWidths=[3 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm])
-            #Aplicamos estilos a las celdas de la tabla
-            table.setStyle(TableStyle([
-                #La primera fila(encabezados) va a estar centrada
-            ('ALIGN',(0,0),(3,0),'CENTER'),
-            ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
-            ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
-            ('GRID', (0, 0), (-1, -1), 1, colors.black), 
-                #El tamaño de las letras de cada una de las celdas será de 10
-            ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ]
-            ))
-                #Establecemos el tamaño de la hoja que ocupará la tabla 
-            table.wrapOn(pdf, 800, 600)
-                #Definimos la coordenada donde se dibujará la tabla
-            table.drawOn(pdf, 60,y)
+                encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
+                detalles = [(Paragraph(str(cliente.idProject.title), styleN),Paragraph(str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
+                table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                table.setStyle(TableStyle([
+                    ('ALIGN',(0,0),(3,0),'CENTER'),
+                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                    ('FONTSIZE', (0, 0), (-1, -1), 10),
+                    ]
+                    ))
+                table.wrapOn(pdf, 800, 600)
+                table.drawOn(pdf, 60,y)
 
             
 

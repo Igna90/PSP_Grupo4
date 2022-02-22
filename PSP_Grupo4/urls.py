@@ -72,6 +72,7 @@ urlpatterns = [
     path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
     path('infoPDF/', login_required(views.infoPDFView.as_view()), name='infoPDF'),
     path('infoPDFFilter/', login_required(views.infoPDFFilterView.as_view()), name='infoPDFFilter'),
+    path('generatePDF/', login_required(views.generatePDFView.as_view()), name='generatePDF'),
 ]
 
 if settings.DEBUG:

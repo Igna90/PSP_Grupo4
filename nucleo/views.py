@@ -1,16 +1,15 @@
 from audioop import reverse
-from contextlib import nullcontext
 import datetime
-from http.client import HTTPResponse
+from io import BytesIO
+from msilib import Table
 from msilib.schema import ListView
 from multiprocessing import context
 from multiprocessing.connection import Client
-import os
-from django.utils.decorators import method_decorator
-from re import template
-
-from tkinter.tix import MAX, Select
 from unicodedata import name
+
+from django.conf import settings
+from django.utils.decorators import method_decorator
+
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 
@@ -23,9 +22,18 @@ from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpd
 from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
 from django.contrib import messages
 from django.contrib.auth import logout
-from django.http import HttpRequest, HttpResponseRedirect
+from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import DeleteView,UpdateView, ListView
 
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Table,TableStyle
+from reportlab.lib.units import cm
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4,landscape
+from reportlab.lib.units import cm
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import Paragraph, Table, TableStyle
+from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 
 def index(request):
     return render(request, "nucleo/index.html")
@@ -377,7 +385,6 @@ class ListProjctView(ListView):
 @method_decorator(is_client,name="dispatch")
 class infoPDFView(ListView):
     model = Participate
-    second_model = User
     template_name="nucleo/users/my_info.html"
         
     def get_context_data(self, **kwargs):
@@ -385,7 +392,7 @@ class infoPDFView(ListView):
         idClient = self.request.user.id
         isParticipate = Participate.objects.filter(idCliente_id = idClient).exists()
         if( isParticipate == True ):
-            context['users'] = User.objects.filter(id=idClient)
+            context['user'] = User.objects.get(id=idClient)
             context['participates'] = Participate.objects.filter(idCliente_id = idClient)
             return context
         else:
@@ -395,7 +402,6 @@ class infoPDFView(ListView):
 @method_decorator(is_client,name="dispatch")
 class infoPDFFilterView(ListView):
     model = Participate
-    second_model = User
     template_name="nucleo/users/my_info.html"
         
     def get_context_data(self, **kwargs):
@@ -403,14 +409,16 @@ class infoPDFFilterView(ListView):
         idClient = self.request.user.id
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
-        projects = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate).exists()
+        projects = Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate).exists()
         if( projects == True ):
-            context['users'] = User.objects.filter(id=idClient)
-            projectsList = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate)
+            context['user'] = User.objects.get(id=idClient)
+            projectsList = Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)
             context['participates'] = Participate.objects.filter(idCliente_id = idClient).filter(idProject_id__in = projectsList)
+            context['stDate'] = stDate
+            context['ndDate'] = ndDate
             return context
         else:
-            context['users'] = User.objects.filter(id=idClient)
+            context['user'] = User.objects.get(id=idClient)
             message = "No existe ningun proyecto en las fechas indicadas"
             context['messages'] = message
             return context
@@ -468,3 +476,106 @@ class ProjectNextWeekListView(ListView):
         context = super().get_context_data(**kwargs)
         context['projectsDates'] = self.get_next_week()
         return context
+    
+class generatePDFView(View):
+    
+    width, height = A4
+    styles = getSampleStyleSheet()
+    styleN = styles["BodyText"]
+    styleN.alignment = TA_LEFT
+    styleBH = styles["Normal"]
+    styleBH.alignment = TA_CENTER
+  
+    def cabecera(self,pdf):
+        logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
+        pdf.drawImage(logo,40,750,120,90,preserveAspectRatio=True)
+        
+    
+    def tarjeta(self,pdf,y):
+        for cliente in User.objects.filter(id = self.request.user.id):
+            pdf.setFont("Courier-Bold",16)
+            pdf.drawString(70, 700, u"DATOS DEL CLIENTE")
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 670, u"Nombre: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(130, 670, u""+str(cliente.name))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 650, u"Apellidos: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(150, 650, u""+str(cliente.surname))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 630, u"Dni: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(100, 630, u""+str(cliente.dni))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 610, u"Dirección: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(150, 610, u""+str(cliente.address))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 590, u"Fecha Nacimiento: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(200, 590, u""+str(cliente.birthDate))
+            
+    def coord(x, y, unit=1):
+        x, y = x * unit, height -  y * unit
+        return x, y   
+        
+    def tabla(self,pdf,y):
+        
+
+
+        stDate = self.request.GET.get('stDate')
+        ndDate = self.request.GET.get('ndDate')
+        if str(stDate) == "":
+            
+
+
+
+              #Creamos una tupla de encabezados para neustra tabla
+            encabezados = ('Titulo', 'Descripcion', 'Nivel', 'Inicio','Fin','Informe final')
+            #Creamos una lista de tuplas que van a contener a las personas
+            detalles = [(cliente.idProject.title, cliente.idProject.description, cliente.idProject.level, cliente.idProject.startDate , cliente.idProject.endDate, cliente.idProject.endReport) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
+            #Establecemos el tamaño de cada una de las columnas de la tabla
+            detalle_orden = Table([encabezados] + detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm])
+            #Aplicamos estilos a las celdas de la tabla
+            detalle_orden.setStyle(TableStyle([
+                #La primera fila(encabezados) va a estar centrada
+                ('ALIGN',(0,0),(0,0),'CENTER'),
+                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
+                ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                #El tamaño de las letras de cada una de las celdas será de 10
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ]
+            ))
+            #Establecemos el tamaño de la hoja que ocupará la tabla 
+            detalle_orden.wrapOn(pdf, 800, 600)
+            #Definimos la coordenada donde se dibujará la tabla
+            detalle_orden.drawOn(pdf, 60,y)
+            for cliente in Participate.objects.filter(idCliente = self.request.user.id):
+                pdf.drawString(70, y-20, u"Descripción: ")
+                pdf.setFont("Courier",8)
+                pdf.drawString(200, y-20, u""+str(cliente.idProject.description))
+            
+
+    def get(self,request,*args,**kwargs):
+        response = HttpResponse(content_type='application/pdf')
+        buffer=BytesIO()
+        pdf = canvas.Canvas(buffer,pagesize=A4,)
+        self.cabecera(pdf)
+        y = 600
+        self.tarjeta(pdf,y)
+        y = 400
+        self.tabla(pdf,y)
+        pdf.showPage()
+        pdf.save()
+        pdf = buffer.getvalue()
+        buffer.close()
+        response.write(pdf)
+        return response
+        
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     stDate = self.request.GET.get('stDate')
+    #     ndDate = self.request.GET.get('ndDate')
+
+    #     return context

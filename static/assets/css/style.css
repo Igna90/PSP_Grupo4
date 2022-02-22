@@ -1434,3 +1434,17 @@ input::-moz-placeholder {
   font-weight: 700;
   text-shadow: -1px 0 2px #2f4d5a;
 }
+.hei{
+  background: linear-gradient(90deg, #CFF37D 0%, #7DE88C 100%);
+  text-align: center;
+  margin-left: 300px;
+}
+
+#target h5{
+  color:white;
+  font-weight: bold;
+  text-align: center;
+}
+.ttp{
+  margin-top: 100px;
+}

@@ -63,6 +63,8 @@ urlpatterns = [
     path('guardarProject/', login_required(views.FormularioProjectView.procesar_formulario), name='guardarProject'),
     path('listEmployeeProjects/', login_required(views.EmployeeProjectView.as_view()), name='listEmployeeProjects'),
     path('clientProjectView/', login_required(views.ClientProjectView.as_view()), name='clientProjectView'),
+    path('listEmployeeCurrentProjects/', login_required(views.EmployeeCurrentProjectView.as_view()), name='listEmployeeCurrentProjects'),
+    path('endProjects/<int:pk>', login_required(views.EmployeeUpdateEndDate.as_view()), name='endProjects'),
     path('searchClient/', login_required(views.SearchClientView.as_view()), name='searchClient'),
     path('listThisProject/', login_required(views.ListProjctView.as_view()), name='listThisProject'),
 
@@ -70,6 +72,14 @@ urlpatterns = [
     path('projectParticipate/<int:pk>',login_required(views.project_participate), name='projectParticipate'),
     path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
     path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
+    #API
+    path('api/users/',User_APIView.as_view()),
+    path('api/participates/',Participate_APIView.as_view()),
+    path('api/projects/',Project_APIView.as_view()),
+    # path('api/employees/<int:pk>',Employees_APIView_Detail.as_view()),  
+    path('api/token/',TestView.as_view()), 
+    #PDF
+    path('reporte_personas_pdf/',(ReportePersonasPDF.as_view()), name="reporte_personas_pdf"),
     path('infoPDF/', login_required(views.infoPDFView.as_view()), name='infoPDF'),
     path('infoPDFFilter/', login_required(views.infoPDFFilterView.as_view()), name='infoPDFFilter'),
     path('generatePDF/', login_required(views.generatePDFView.as_view()), name='generatePDF'),

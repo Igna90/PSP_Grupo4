@@ -506,13 +506,6 @@ class ProjectNextWeekListView(ListView):
         return context
     
 class generatePDFView(View):
-    
-    width, height = A4
-    styles = getSampleStyleSheet()
-    styleN = styles["BodyText"]
-    styleN.alignment = TA_LEFT
-    styleBH = styles["Normal"]
-    styleBH.alignment = TA_CENTER
   
     def cabecera(self,pdf):
         logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
@@ -544,51 +537,53 @@ class generatePDFView(View):
             pdf.setFont("Courier",12)
             pdf.drawString(200, 590, u""+str(cliente.birthDate))
             
-    def coord(x, y, unit=1):
-        x, y = x * unit, height -  y * unit
-        return x, y   
-        
     def tabla(self,pdf,y):
-        
-
-
+        styles = getSampleStyleSheet()
+        styleN = styles["BodyText"]
+        styleN.alignment = TA_LEFT
+        styleBH = styles["Normal"]
+        styleBH.alignment = TA_CENTER
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
         if str(stDate) == "":
+                pdf.setFont("Courier-Bold",16)
+                pdf.drawString(70, 550, u" PROYECTOS DEL CLIENTE ")
+                encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
+                detalles = [(Paragraph(str(cliente.idProject.title), styleN),Paragraph(str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
+                table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                table.setStyle(TableStyle([
+                    ('ALIGN',(0,0),(3,0),'CENTER'),
+                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                    ('FONTSIZE', (0, 0), (-1, -1), 10),
+                    ]
+                    ))
+                table.wrapOn(pdf, 800, 600)
+                table.drawOn(pdf, 60,y)
+        else:
+                pdf.setFont("Courier-Bold",16)
+                pdf.drawString(70, 515, u" PROYECTOS DEL CLIENTE FILTRADOS POR FECHA")
+                encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
+                detalles = [(Paragraph(str(project.title), styleN),Paragraph(str(project.description), styleN), Paragraph(str(project.level), styleN),Paragraph(str(project.startDate), styleN),Paragraph(str(project.endDate), styleN),Paragraph(str(project.endReport), styleN)) for project in Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)]
+                table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                table.setStyle(TableStyle([
+                    ('ALIGN',(0,0),(3,0),'CENTER'),
+                    ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
+                    ('BOX', (0,0), (-1,-1), 0.25, colors.black),
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                    ('FONTSIZE', (0, 0), (-1, -1), 10),
+                    ]
+                    ))
+                table.wrapOn(pdf, 800, 600)
+                table.drawOn(pdf, 60,y)
             
-
-
-
-              #Creamos una tupla de encabezados para neustra tabla
-            encabezados = ('Titulo', 'Descripcion', 'Nivel', 'Inicio','Fin','Informe final')
-            #Creamos una lista de tuplas que van a contener a las personas
-            detalles = [(cliente.idProject.title, cliente.idProject.description, cliente.idProject.level, cliente.idProject.startDate , cliente.idProject.endDate, cliente.idProject.endReport) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
-            #Establecemos el tamaño de cada una de las columnas de la tabla
-            detalle_orden = Table([encabezados] + detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm])
-            #Aplicamos estilos a las celdas de la tabla
-            detalle_orden.setStyle(TableStyle([
-                #La primera fila(encabezados) va a estar centrada
-                ('ALIGN',(0,0),(0,0),'CENTER'),
-                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
-                ('GRID', (0, 0), (-1, -1), 1, colors.black), 
-                #El tamaño de las letras de cada una de las celdas será de 10
-                ('FONTSIZE', (0, 0), (-1, -1), 10),
-            ]
-            ))
-            #Establecemos el tamaño de la hoja que ocupará la tabla 
-            detalle_orden.wrapOn(pdf, 800, 600)
-            #Definimos la coordenada donde se dibujará la tabla
-            detalle_orden.drawOn(pdf, 60,y)
-            for cliente in Participate.objects.filter(idCliente = self.request.user.id):
-                pdf.drawString(70, y-20, u"Descripción: ")
-                pdf.setFont("Courier",8)
-                pdf.drawString(200, y-20, u""+str(cliente.idProject.description))
             
 
     def get(self,request,*args,**kwargs):
         response = HttpResponse(content_type='application/pdf')
         buffer=BytesIO()
-        pdf = canvas.Canvas(buffer,pagesize=A4,)
+        pdf = canvas.Canvas(buffer,pagesize=(23.2 * cm, 32.3 * cm),)
         self.cabecera(pdf)
         y = 600
         self.tabla(pdf, y)

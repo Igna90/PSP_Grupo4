@@ -364,11 +364,13 @@ class SearchClientView(ListView):
     template_name="nucleo/users/search_client.html"
     
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['participates']= Participate.objects.all();
         if self.request.method == "GET":
-            context = super().get_context_data(**kwargs)
             role = self.request.GET.get('rol')
             context['participates'] = Participate.objects.filter(rol = role)
             return context
+        return context
 
 @method_decorator(is_employee,name="dispatch")
 class ListProjctView(ListView):

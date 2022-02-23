@@ -4,8 +4,8 @@
         <div class="container">
             <h2 class="ss">Clientes</h2>
             <h5>Buscar clientes por rol:</h5>
-            <form method="GET" action="">
-                {% csrf_token %}
+            <form method="GET" action="{% url 'searchClient' %}">
+                {% csrf_token %} 
                 <select name="rol" id="rol">
                     <option value="">--Elige un rol--</option>
                     <option value="Estudiante">Estudiante</option>
@@ -39,7 +39,7 @@
                   <td>{{ participate.rol }}</td>
                   <td>{{ participate.idProject.title }}</td>
                   <td>
-                      <form action="{% url 'listThisProject' %}" method="GET">
+                      <form action="{% url 'listThisProject' participate.idProject.id %}" method="GET">
                         <input type="hidden" name="idProject" value="{{ participate.idProject.id }}"/>
                         <button class="btn btn-primary bot" type="submit">Ver Proyecto</button>
                       </form>

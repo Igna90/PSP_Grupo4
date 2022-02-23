@@ -45,19 +45,21 @@
     <div class="container d-flex align-items-center justify-content-between">
 
       <div class="logo">
-        
+          {% if request.user.is_authenticated %}
+          <h1 class="text-light"> Bienvenid@ {{request.user.username}}</h1>
+          {% endif %}
 
-        {% if request.user.is_authenticated %}
-        <h1 class="text-light"> Bienvenid@ {{request.user.username}}</h1>
-        {% endif %}
-
-        {% if messages %}
-        {% for message in messages %}
-        {% if message.tags == 'success' %}
-        <strong><span>{{ message }}</span></strong>
-        {% endif %}
-        {% endfor %}
-        {% endif %}
+          {% if messages %}
+          {% for message in messages %}
+          {% if message.tags == 'success' %}
+          <strong><span style="color:green;">{{ message }}</span></strong>
+          {% endif %}
+          {% if message.tags == 'error' %}
+          <strong><span style="color:red;">{{ message }}</span></strong>
+          {% endif %}
+          {% endfor %}
+          
+          {% endif %}
       </div>
 
       <nav id="navbar" class="navbar">
@@ -73,6 +75,7 @@
               <li><a href="{% url 'listProjects' %}">Ver proyectos</a></li>
               {% if request.user.role_user == "Empleado" %}
               <li><a href="{% url 'listEmployeeProjects' %}">Proyectos Propios</a></li>
+              <li><a href="{% url 'listEmployeeCurrentProjects' %}">Finalizar proyectos</a></li>
               {% endif %}
               {% if request.user.role_user == "Cliente" %}
               <li><a href="{% url 'listProjectsNextWeek' %}">Prox Semana</a></li>
@@ -93,7 +96,7 @@
           {% if request.user.role_user == "Empleado" %}
           <li class="dropdown"><a href="#"><span> Clientes </span> <i class="bi bi-chevron-down"></i></a>
             <ul>
-              <li><a href="{% url 'searchClient' %}"> Buscar Clientes </a></li>
+              <li><a href="{% url 'sClient' %}"> Buscar Clientes </a></li>
             </ul>
           </li>
           {% endif %}

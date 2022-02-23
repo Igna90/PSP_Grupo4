@@ -16,7 +16,7 @@ from django.urls import reverse_lazy
 from django.contrib.auth import authenticate,login
 from django.contrib.auth.decorators import login_required
 from django.views import View
-from nucleo.decorators import is_active, is_admin, is_client, is_employee, is_not_admin
+from nucleo.decorators import is_active, is_admin, is_client, is_employee, is_not_admin, is_current_employee
 from nucleo.models import Category, Participate, Project, User
 from registration.forms import EditCategoryForm, EmployeeForm, UserForm, UserUpdateForm,CategoryForm
 from registration.forms import EmployeeForm, ProjectForm, UserForm, UserUpdateForm
@@ -34,6 +34,16 @@ from reportlab.lib.units import cm
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.platypus import Paragraph, Table, TableStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ParseError
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
+from django.http import Http404
+from nucleo.serializers import ParticipateSerializers, ProjectsSerializers, UserSerializers
 
 def index(request):
     return render(request, "nucleo/index.html")
@@ -356,7 +366,18 @@ class ClientProjectView(ListView):
         context = super().get_context_data(**kwargs)
         idProject = self.request.GET.get('idProject')
         context['participates'] = Participate.objects.filter(idProject_id = idProject)
-        return context 
+        return context
+    
+@method_decorator(is_employee,name="dispatch")
+class SClientView(ListView):
+    model = Participate
+    template_name="nucleo/users/search_client.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        projects = Project.objects.filter(idEmployee = self.request.user.id)
+        context['participates'] = Participate.objects.filter(idProject_id__in = projects)
+        return context
     
 @method_decorator(is_employee,name="dispatch")
 class SearchClientView(ListView):
@@ -364,15 +385,14 @@ class SearchClientView(ListView):
     template_name="nucleo/users/search_client.html"
     
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['participates']= Participate.objects.all();
         if self.request.method == "GET":
+            context = super().get_context_data(**kwargs)
             role = self.request.GET.get('rol')
             context['participates'] = Participate.objects.filter(rol = role)
             return context
-        return context
 
 @method_decorator(is_employee,name="dispatch")
+@method_decorator(is_current_employee,name="dispatch")
 class ListProjctView(ListView):
     model = Project
     template_name="nucleo/users/this_project.html"
@@ -482,8 +502,8 @@ class ProjectNextWeekListView(ListView):
 class generatePDFView(View):
   
     def cabecera(self,pdf):
-        logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
-        pdf.drawImage(logo,40,750,120,90,preserveAspectRatio=True)
+        logo = settings.BASE_DIR.as_posix()+'/static/assets/img/banner.png'
+        pdf.drawImage(logo,40,780,580,110,preserveAspectRatio=True)
         
     
     def tarjeta(self,pdf,y):
@@ -514,22 +534,22 @@ class generatePDFView(View):
     def tabla(self,pdf,y):
         styles = getSampleStyleSheet()
         styleN = styles["BodyText"]
-        styleN.alignment = TA_LEFT
-        styleBH = styles["Normal"]
-        styleBH.alignment = TA_CENTER
+        styleN.alignment = TA_CENTER
+        styleN.wordWrap = True
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
         if str(stDate) == "":
                 pdf.setFont("Courier-Bold",16)
-                pdf.drawString(70, 550, u" PROYECTOS DEL CLIENTE ")
+                pdf.drawString(70, 525, u" PROYECTOS DEL CLIENTE ")
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
                 detalles = [(Paragraph(str(cliente.idProject.title), styleN),Paragraph(str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
-                table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                table = Table([encabezado]+detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
                 table.setStyle(TableStyle([
                     ('ALIGN',(0,0),(3,0),'CENTER'),
                     ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                     ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('VALIGN', (-1, 0), (-2, 0), 'MIDDLE'),
                     ('FONTSIZE', (0, 0), (-1, -1), 10),
                     ]
                     ))
@@ -537,20 +557,35 @@ class generatePDFView(View):
                 table.drawOn(pdf, 60,y)
         else:
                 pdf.setFont("Courier-Bold",16)
-                pdf.drawString(70, 515, u" PROYECTOS DEL CLIENTE FILTRADOS POR FECHA")
+                pdf.drawString(70, 525, u" PROYECTOS DEL CLIENTE ")
+                pdf.setFont("Courier-Bold",8)
+                pdf.drawString(70, 515, u"*Proyectos cuya fecha de inicio se encuentra entre "+str(stDate)+ " y "+str(ndDate))
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
                 detalles = [(Paragraph(str(project.title), styleN),Paragraph(str(project.description), styleN), Paragraph(str(project.level), styleN),Paragraph(str(project.startDate), styleN),Paragraph(str(project.endDate), styleN),Paragraph(str(project.endReport), styleN)) for project in Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)]
-                table = Table([encabezado]+detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                table = Table([encabezado]+detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
                 table.setStyle(TableStyle([
                     ('ALIGN',(0,0),(3,0),'CENTER'),
                     ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                     ('BOX', (0,0), (-1,-1), 0.25, colors.black),
-                    ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                    ('GRID', (0, 0), (-1, -1), 1, colors.black),
+                    ('VALIGN', (-1, 0), (-2, 0), 'MIDDLE'),
                     ('FONTSIZE', (0, 0), (-1, -1), 10),
                     ]
                     ))
                 table.wrapOn(pdf, 800, 600)
                 table.drawOn(pdf, 60,y)
+    
+    def footer(self,pdf,y):
+            pdf.setFont("Courier-Bold",10)
+            pdf.drawString(70, 100, u" Escuela de Proyectos 'IgnAlba' ")
+            pdf.setFont("Courier",8)
+            pdf.drawString(70, 80, u" C/ La Rosa, 6 11006 ")
+            pdf.setFont("Courier",8)
+            pdf.drawString(70, 60, u" CIF-A4552245 ")
+            pdf.setFont("Courier",8)
+            pdf.drawString(70, 40, u" 956 228 477 / escuela_de_proyectos@gmail.com")
+            logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
+            pdf.drawImage(logo,40,25,1050,110,preserveAspectRatio=True)
             
     def get(self,request,*args,**kwargs):
         response = HttpResponse(content_type='application/pdf')
@@ -559,8 +594,10 @@ class generatePDFView(View):
         self.cabecera(pdf)
         y = 600
         self.tarjeta(pdf,y)
-        y = 400
+        y = 300
         self.tabla(pdf,y)
+        y = 70
+        self.footer(pdf,y)
         pdf.showPage()
         pdf.save()
         pdf = buffer.getvalue()
@@ -568,9 +605,100 @@ class generatePDFView(View):
         response.write(pdf)
         return response
         
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     stDate = self.request.GET.get('stDate')
-    #     ndDate = self.request.GET.get('ndDate')
 
-    #     return context
+@method_decorator(is_employee,name="dispatch")
+class EmployeeCurrentProjectView(ListView):
+    model = Project
+    template_name="nucleo/users/employee_current_projects.html"
+            
+    def get_context_data(self, **kwargs):
+        now = datetime.datetime.now()
+        context = super().get_context_data(**kwargs)
+        context['projects'] = Project.objects.filter(idEmployee_id=self.request.user.pk,endDate__gt=now)
+        return context
+    
+@method_decorator(is_employee,name="dispatch")
+@method_decorator(is_current_employee,name="dispatch")        
+class EmployeeUpdateEndDate(UpdateView):
+        model= Project
+        template_name='nucleo/users/updateEndReport.html'
+        fields = ['endReport']
+        
+         
+        def post(self, request, **kwargs):
+            if self.request.method == "POST":
+                projectId = self.request.POST.get('idProject')
+                now = datetime.datetime.now()
+                Project.objects.filter(id = projectId).update(endDate = now)
+                messages.success(request, "Su proyecto ha sido finalizado con exito.")
+            return super(EmployeeUpdateEndDate, self).post(request, **kwargs)
+        
+          
+        def dispatch(self, request, *args, **kwargs):
+            self.object = self.get_object()
+            return super().dispatch(request, *args, **kwargs)
+        
+        
+        def get_success_url(self):
+            return '/listEmployeeCurrentProjects/'
+        
+class User_APIView(APIView):
+    # permission_classes=[IsAuthenticated]
+    
+    def get(self,request,format=None,*args,**kwargs):
+        user = User.objects.filter(role_user='Cliente')
+        serializer = UserSerializers(user,many=True)
+        return Response(serializer.data)
+    
+    # def post(self, request, format=None):
+    #     serializer = UserSerializers(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class Participate_APIView(APIView):
+    # permission_classes=[IsAuthenticated]
+    
+    def get(self,request,format=None,*args,**kwargs):
+        participate = Participate.objects.all()
+        serializer = ParticipateSerializers(participate,many=True)
+        return Response(serializer.data)
+
+class Project_APIView(APIView):
+    # permission_classes=[IsAuthenticated]
+    
+    def get(self,request,format=None,*args,**kwargs):
+        proj = Project.objects.all()
+        serializer = ProjectsSerializers(proj,many=True)
+        return Response(serializer.data)
+    
+    
+class TestView(APIView):
+    
+    def get(self,request, format=None):
+        return Response({'detail':"GET Response"})
+    
+    def post(self,request,format=None):
+        try:
+            data=request.data
+        except ParseError as error:
+            return Response(
+                'Invalid JSON - {0}'.format(error.detail),
+                status= status.HTTP_400_BAD_REQUEST
+            )
+        if "user" not in data or "password" not in data:
+            return Response(
+                'Wrong credentials',
+                status = status.HTTP_401_UNAUTHORIZED
+            )
+            
+        user = User.objects.get(username=data["user"])
+        if not user:
+            return Response(
+                'No default user,please create one',
+                status=status.HTTP_404_NOT_FOUND
+            )
+            
+        token = Token.objects.get_or_create(user=user)
+        return Response({'details':'POST answer','token':token[0].key})

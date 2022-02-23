@@ -7,6 +7,16 @@ from multiprocessing import context
 from multiprocessing.connection import Client
 from unicodedata import name
 
+
+from audioop import reverse
+import datetime
+from io import BytesIO
+from msilib import Table
+from msilib.schema import ListView
+from multiprocessing import context
+from multiprocessing.connection import Client
+from unicodedata import name
+
 from django.conf import settings
 from django.utils.decorators import method_decorator
 
@@ -24,6 +34,11 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.http import HttpRequest, HttpResponse, HttpResponseRedirect
 from django.views.generic import DeleteView,UpdateView, ListView
+
+from reportlab.pdfgen import canvas
+from reportlab.platypus import Table,TableStyle
+from reportlab.lib.units import cm
+from reportlab.lib import colors
 
 from reportlab.pdfgen import canvas
 from reportlab.platypus import Table,TableStyle
@@ -382,6 +397,19 @@ class ListProjctView(ListView):
             context['projects'] = Project.objects.filter(id = idProject)
             return context
 
+
+@method_decorator(is_employee,name="dispatch")
+class ListProjctView(ListView):
+    model = Project
+    template_name="nucleo/users/this_project.html"
+    
+    def get_context_data(self, **kwargs):
+        if self.request.method == "GET":
+            context = super().get_context_data(**kwargs)
+            idProject = self.request.GET.get('idProject')
+            context['projects'] = Project.objects.filter(id = idProject)
+            return context
+
 @method_decorator(is_client,name="dispatch")
 class infoPDFView(ListView):
     model = Participate
@@ -563,6 +591,94 @@ class generatePDFView(View):
         pdf = canvas.Canvas(buffer,pagesize=A4,)
         self.cabecera(pdf)
         y = 600
+        self.tabla(pdf, y)
+        #Con show page hacemos un corte de página para pasar a la siguiente
+class generatePDFView(View):
+    
+    width, height = A4
+    styles = getSampleStyleSheet()
+    styleN = styles["BodyText"]
+    styleN.alignment = TA_LEFT
+    styleBH = styles["Normal"]
+    styleBH.alignment = TA_CENTER
+  
+    def cabecera(self,pdf):
+        logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
+        pdf.drawImage(logo,40,750,120,90,preserveAspectRatio=True)
+        
+    
+    def tarjeta(self,pdf,y):
+        for cliente in User.objects.filter(id = self.request.user.id):
+            pdf.setFont("Courier-Bold",16)
+            pdf.drawString(70, 700, u"DATOS DEL CLIENTE")
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 670, u"Nombre: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(130, 670, u""+str(cliente.name))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 650, u"Apellidos: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(150, 650, u""+str(cliente.surname))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 630, u"Dni: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(100, 630, u""+str(cliente.dni))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 610, u"Dirección: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(150, 610, u""+str(cliente.address))
+            pdf.setFont("Courier-Bold",12)
+            pdf.drawString(70, 590, u"Fecha Nacimiento: ")
+            pdf.setFont("Courier",12)
+            pdf.drawString(200, 590, u""+str(cliente.birthDate))
+            
+    def coord(x, y, unit=1):
+        x, y = x * unit, height -  y * unit
+        return x, y   
+        
+    def tabla(self,pdf,y):
+        
+
+
+        stDate = self.request.GET.get('stDate')
+        ndDate = self.request.GET.get('ndDate')
+        if str(stDate) == "":
+            
+
+
+
+              #Creamos una tupla de encabezados para neustra tabla
+            encabezados = ('Titulo', 'Descripcion', 'Nivel', 'Inicio','Fin','Informe final')
+            #Creamos una lista de tuplas que van a contener a las personas
+            detalles = [(cliente.idProject.title, cliente.idProject.description, cliente.idProject.level, cliente.idProject.startDate , cliente.idProject.endDate, cliente.idProject.endReport) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
+            #Establecemos el tamaño de cada una de las columnas de la tabla
+            detalle_orden = Table([encabezados] + detalles, rowHeights=50,colWidths=[3 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm, 5 * cm])
+            #Aplicamos estilos a las celdas de la tabla
+            detalle_orden.setStyle(TableStyle([
+                #La primera fila(encabezados) va a estar centrada
+                ('ALIGN',(0,0),(0,0),'CENTER'),
+                #Los bordes de todas las celdas serán de color negro y con un grosor de 1
+                ('GRID', (0, 0), (-1, -1), 1, colors.black), 
+                #El tamaño de las letras de cada una de las celdas será de 10
+                ('FONTSIZE', (0, 0), (-1, -1), 10),
+            ]
+            ))
+            #Establecemos el tamaño de la hoja que ocupará la tabla 
+            detalle_orden.wrapOn(pdf, 800, 600)
+            #Definimos la coordenada donde se dibujará la tabla
+            detalle_orden.drawOn(pdf, 60,y)
+            for cliente in Participate.objects.filter(idCliente = self.request.user.id):
+                pdf.drawString(70, y-20, u"Descripción: ")
+                pdf.setFont("Courier",8)
+                pdf.drawString(200, y-20, u""+str(cliente.idProject.description))
+            
+
+    def get(self,request,*args,**kwargs):
+        response = HttpResponse(content_type='application/pdf')
+        buffer=BytesIO()
+        pdf = canvas.Canvas(buffer,pagesize=A4,)
+        self.cabecera(pdf)
+        y = 600
         self.tarjeta(pdf,y)
         y = 400
         self.tabla(pdf,y)
@@ -572,10 +688,12 @@ class generatePDFView(View):
         buffer.close()
         response.write(pdf)
         return response
+    
         
     # def get_context_data(self, **kwargs):
     #     context = super().get_context_data(**kwargs)
     #     stDate = self.request.GET.get('stDate')
     #     ndDate = self.request.GET.get('ndDate')
 
+    #     return context
     #     return context

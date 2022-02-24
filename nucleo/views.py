@@ -554,8 +554,8 @@ class generatePDFView(View):
                 pdf.setFont("Courier-Bold",16)
                 pdf.drawString(70, 525, u" PROYECTOS DEL CLIENTE ")
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
-                detalles = [(Paragraph("PROYECTO: "+str(cliente.idProject.title), styleN),Paragraph("DESCRIPCION: "+str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
-                table = Table(detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                detalles = [(Paragraph(str(cliente.idProject.title), styleN),Paragraph(str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
+                table = Table([encabezado]+detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
                 table.setStyle(TableStyle([
                     ('ALIGN',(0,0),(3,0),'CENTER'),
                     ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),

@@ -499,11 +499,22 @@ class ProjectNextWeekListView(ListView):
         context['projectsDates'] = self.get_next_week()
         return context
     
+    
+@method_decorator(is_client,name="dispatch")
+@method_decorator(is_active,name="dispatch")
 class generatePDFView(View):
   
     def cabecera(self,pdf):
-        logo = settings.BASE_DIR.as_posix()+'/static/assets/img/banner.png'
-        pdf.drawImage(logo,40,780,580,110,preserveAspectRatio=True)
+            pdf.setFont("Courier-Bold",10)
+            pdf.drawString(70, 880, u" Escuela de Proyectos 'IgnAlba' ")
+            pdf.setFont("Courier",8)
+            pdf.drawString(70, 860, u" C/ La Rosa, 6 11006 ")
+            pdf.setFont("Courier",8)
+            pdf.drawString(70, 840, u" CIF-A4552245 ")
+            pdf.setFont("Courier",8)
+            pdf.drawString(70, 820, u" 956 228 477 / escuela_de_proyectos@gmail.com")
+            logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
+            pdf.drawImage(logo,40,800,1050,110,preserveAspectRatio=True)
         
     
     def tarjeta(self,pdf,y):
@@ -531,6 +542,7 @@ class generatePDFView(View):
             pdf.setFont("Courier",12)
             pdf.drawString(200, 590, u""+str(cliente.birthDate))
             
+                              
     def tabla(self,pdf,y):
         styles = getSampleStyleSheet()
         styleN = styles["BodyText"]
@@ -542,14 +554,14 @@ class generatePDFView(View):
                 pdf.setFont("Courier-Bold",16)
                 pdf.drawString(70, 525, u" PROYECTOS DEL CLIENTE ")
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
-                detalles = [(Paragraph(str(cliente.idProject.title), styleN),Paragraph(str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
-                table = Table([encabezado]+detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
+                detalles = [(Paragraph("PROYECTO: "+str(cliente.idProject.title), styleN),Paragraph("DESCRIPCION: "+str(cliente.idProject.description), styleN), Paragraph(str(cliente.idProject.level), styleN),Paragraph(str(cliente.idProject.startDate), styleN),Paragraph(str(cliente.idProject.endDate), styleN),Paragraph(str(cliente.idProject.endReport), styleN)) for cliente in Participate.objects.filter(idCliente = self.request.user.id)]
+                table = Table(detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
                 table.setStyle(TableStyle([
                     ('ALIGN',(0,0),(3,0),'CENTER'),
                     ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                     ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                     ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ('VALIGN', (-1, 0), (-2, 0), 'MIDDLE'),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                     ('FONTSIZE', (0, 0), (-1, -1), 10),
                     ]
                     ))
@@ -568,24 +580,12 @@ class generatePDFView(View):
                     ('INNERGRID', (0,0), (-1,-1), 0.25, colors.black),
                     ('BOX', (0,0), (-1,-1), 0.25, colors.black),
                     ('GRID', (0, 0), (-1, -1), 1, colors.black),
-                    ('VALIGN', (-1, 0), (-2, 0), 'MIDDLE'),
+                    ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                     ('FONTSIZE', (0, 0), (-1, -1), 10),
                     ]
                     ))
                 table.wrapOn(pdf, 800, 600)
                 table.drawOn(pdf, 60,y)
-    
-    def footer(self,pdf,y):
-            pdf.setFont("Courier-Bold",10)
-            pdf.drawString(70, 100, u" Escuela de Proyectos 'IgnAlba' ")
-            pdf.setFont("Courier",8)
-            pdf.drawString(70, 80, u" C/ La Rosa, 6 11006 ")
-            pdf.setFont("Courier",8)
-            pdf.drawString(70, 60, u" CIF-A4552245 ")
-            pdf.setFont("Courier",8)
-            pdf.drawString(70, 40, u" 956 228 477 / escuela_de_proyectos@gmail.com")
-            logo = settings.BASE_DIR.as_posix()+'/static/assets/img/logo.png'
-            pdf.drawImage(logo,40,25,1050,110,preserveAspectRatio=True)
             
     def get(self,request,*args,**kwargs):
         response = HttpResponse(content_type='application/pdf')
@@ -596,8 +596,6 @@ class generatePDFView(View):
         self.tarjeta(pdf,y)
         y = 300
         self.tabla(pdf,y)
-        y = 70
-        self.footer(pdf,y)
         pdf.showPage()
         pdf.save()
         pdf = buffer.getvalue()
@@ -672,7 +670,6 @@ class Project_APIView(APIView):
         proj = Project.objects.all()
         serializer = ProjectsSerializers(proj,many=True)
         return Response(serializer.data)
-    
     
 class TestView(APIView):
     

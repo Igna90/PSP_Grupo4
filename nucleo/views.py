@@ -573,7 +573,8 @@ class generatePDFView(View):
                 pdf.setFont("Courier-Bold",8)
                 pdf.drawString(70, 515, u"*Proyectos cuya fecha de inicio se encuentra entre "+str(stDate)+ " y "+str(ndDate))
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
-                detalles = [(Paragraph(str(project.title), styleN),Paragraph(str(project.description), styleN), Paragraph(str(project.level), styleN),Paragraph(str(project.startDate), styleN),Paragraph(str(project.endDate), styleN),Paragraph(str(project.endReport), styleN)) for project in Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)]
+                projects = Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)
+                detalles = [(Paragraph(str(project.idProject.title), styleN),Paragraph(str(project.idProject.description), styleN), Paragraph(str(project.idProject.level), styleN),Paragraph(str(project.idProject.startDate), styleN),Paragraph(str(project.idProject.endDate), styleN),Paragraph(str(project.idProject.endReport), styleN)) for project in Participate.objects.filter(idProject_id__in=projects).filter(idCliente_id = self.request.user.id)]
                 table = Table([encabezado]+detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
                 table.setStyle(TableStyle([
                     ('ALIGN',(0,0),(3,0),'CENTER'),

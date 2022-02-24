@@ -431,10 +431,10 @@ class infoPDFFilterView(ListView):
         idClient = self.request.user.id
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
-        projects = Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate).exists()
+        projects = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate).exists()
         if( projects == True ):
             context['user'] = User.objects.get(id=idClient)
-            projectsList = Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)
+            projectsList = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate)
             context['participates'] = Participate.objects.filter(idCliente_id = idClient).filter(idProject_id__in = projectsList)
             context['stDate'] = stDate
             context['ndDate'] = ndDate
@@ -573,7 +573,7 @@ class generatePDFView(View):
                 pdf.setFont("Courier-Bold",8)
                 pdf.drawString(70, 515, u"*Proyectos cuya fecha de inicio se encuentra entre "+str(stDate)+ " y "+str(ndDate))
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
-                projects = Project.objects.filter(endDate__gt = stDate, endDate__lt = ndDate)
+                projects = Project.objects.filter(startDate__gt = stDate, startDate__lt = ndDate)
                 detalles = [(Paragraph(str(project.idProject.title), styleN),Paragraph(str(project.idProject.description), styleN), Paragraph(str(project.idProject.level), styleN),Paragraph(str(project.idProject.startDate), styleN),Paragraph(str(project.idProject.endDate), styleN),Paragraph(str(project.idProject.endReport), styleN)) for project in Participate.objects.filter(idProject_id__in=projects).filter(idCliente_id = self.request.user.id)]
                 table = Table([encabezado]+detalles, rowHeights=65,colWidths=[3 * cm, 5 * cm, 1 * cm, 3 * cm, 3 * cm, 3 * cm])
                 table.setStyle(TableStyle([
@@ -595,7 +595,7 @@ class generatePDFView(View):
         self.cabecera(pdf)
         y = 600
         self.tarjeta(pdf,y)
-        y = 300
+        y = 350
         self.tabla(pdf,y)
         pdf.showPage()
         pdf.save()

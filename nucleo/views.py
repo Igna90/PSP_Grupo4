@@ -550,7 +550,7 @@ class generatePDFView(View):
         styleN.wordWrap = True
         stDate = self.request.GET.get('stDate')
         ndDate = self.request.GET.get('ndDate')
-        if str(stDate) == "":
+        if str(stDate or ndDate) == "":
                 pdf.setFont("Courier-Bold",16)
                 pdf.drawString(70, 525, u" PROYECTOS DEL CLIENTE ")
                 encabezado = ("Titulo","Descripcion","Nivel","Fecha de inicio","Fecha de fin","Informe final")
@@ -595,7 +595,7 @@ class generatePDFView(View):
         self.cabecera(pdf)
         y = 600
         self.tarjeta(pdf,y)
-        y = 350
+        y = 300
         self.tabla(pdf,y)
         pdf.showPage()
         pdf.save()

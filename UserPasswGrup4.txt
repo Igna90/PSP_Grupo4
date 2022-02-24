@@ -9,14 +9,13 @@ Password: aaaa1234
 Usuario empleado: Andres
 Password: 1234567_
 
-Observaciones:
+Usuario empleado: Andres_M
+Password aaaa1234
 
-Nos gustaría dejar constancia de:
 
-- Hemos considerado que un proyecto puede empezar y acabar el mismo día, por ejemplo, un proyecto que se diera
-en un curso intensivo de 10h, en el cual se trabaje un proyecto como ejercicio, y haya que entregarlo al finalizar.
 
-- No se puede crear un proyecto que empiece hoy, ya que consideramos que los clientes no tendrían tiempo suficiente
-para su inscripción.
+URL PythonAnywhere
+
+http://ignalba2.pythonanywhere.com/
 
 

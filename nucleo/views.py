@@ -640,36 +640,14 @@ class EmployeeUpdateEndDate(UpdateView):
         
         def get_success_url(self):
             return '/listEmployeeCurrentProjects/'
-        
-class User_APIView(APIView):
-    # permission_classes=[IsAuthenticated]
-    
-    def get(self,request,format=None,*args,**kwargs):
-        user = User.objects.filter(role_user='Cliente')
-        serializer = UserSerializers(user,many=True)
-        return Response(serializer.data)
-    
-    # def post(self, request, format=None):
-    #     serializer = UserSerializers(data=request.data)
-    #     if serializer.is_valid():
-    #         serializer.save()
-    #         return Response(serializer.data, status=status.HTTP_201_CREATED)
-    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class Participate_APIView(APIView):
-    # permission_classes=[IsAuthenticated]
-    
-    def get(self,request,format=None,*args,**kwargs):
-        participate = Participate.objects.all()
-        serializer = ParticipateSerializers(participate,many=True)
-        return Response(serializer.data)
 
 class Project_APIView(APIView):
     # permission_classes=[IsAuthenticated]
     
     def get(self,request,format=None,*args,**kwargs):
-        proj = Project.objects.all()
-        serializer = ProjectsSerializers(proj,many=True)
+        now = datetime.datetime.now()
+        projects = Project.objects.filter(startDate__lt=now)
+        serializer = ProjectsSerializers(projects,many=True)
         return Response(serializer.data)
     
 class TestView(APIView):

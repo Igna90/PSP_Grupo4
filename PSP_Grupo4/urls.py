@@ -74,11 +74,8 @@ urlpatterns = [
     path('createdParticipate/<int:pk>',login_required(views.agregarParticipa), name='createdParticipate'),
     path('listProjectsNextWeek/', login_required(views.ProjectNextWeekListView.as_view()), name='listProjectsNextWeek'),
     #API
-    path('api/login/',views.User_APIView.as_view()),
-    path('api/participates/',views.Participate_APIView.as_view()),
-    path('api/projects/',views.Project_APIView.as_view()),
-    # path('api/employees/<int:pk>',Employees_APIView_Detail.as_view()),  
-    path('api/token/',views.TestView.as_view()), 
+    path('api/projects/',views.Project_APIView.as_view()), 
+    path('api/login/',views.TestView.as_view()), 
     #PDF
     path('infoPDF/', login_required(views.infoPDFView.as_view()), name='infoPDF'),
     path('infoPDFFilter/', login_required(views.infoPDFFilterView.as_view()), name='infoPDFFilter'),
